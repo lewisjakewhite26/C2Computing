@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoundWave Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F97316;
+    --orange-dark: #EA580C;
+    --orange-light: #FED7AA;
+    --orange-pale: #FFF7ED;
+    --bg: #F5F0EB;
+    --panel: #FFFFFF;
+    --panel-border: #E2D9D0;
+    --text: #1C1917;
+    --text-muted: #78716C;
+    --stage-bg: #1C1917;
+    --wave-colour: #F97316;
+    --wave-saved: #FB923C;
+    --red: #EF4444;
+    --green: #22C55E;
+    --green-dark: #16A34A;
+    --blue: #3B82F6;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --shadow: 0 4px 0px rgba(0,0,0,0.15);
+    --shadow-sm: 0 2px 0px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--bg);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--panel);
+    border-bottom: 2px solid var(--panel-border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .app-logo {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    color: var(--orange);
+    letter-spacing: -0.5px;
+  }
+  .app-logo span { color: var(--text); }
+  .topbar-spacer { flex: 1; }
+  .status-pill {
+    background: var(--orange-pale);
+    border: 2px solid var(--orange-light);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--orange);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .status-dot.recording { background: var(--red); animation: none; opacity: 1; }
+  .status-dot.listening { background: var(--blue); animation: none; opacity: 1; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 1fr;
+    flex: 1;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  /* LEFT PANEL — CLIP LIST */
+  .clip-panel {
+    background: var(--panel);
+    border-right: 2px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .clip-panel-header {
+    padding: 12px 14px 8px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1.5px solid var(--panel-border);
+    flex-shrink: 0;
+  }
+  .clip-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .clip-list::-webkit-scrollbar { width: 4px; }
+  .clip-list::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+
+  .clip-item {
+    background: var(--orange-pale);
+    border: 2.5px solid var(--orange-light);
+    border-radius: var(--radius-lg);
+    padding: 10px 12px;
+    cursor: grab;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+    touch-action: none;
+  }
+  .clip-item:active { cursor: grabbing; transform: scale(1.03); }
+  .clip-item.dragging { opacity: 0.5; transform: scale(1.05); box-shadow: 0 8px 24px rgba(249,115,22,0.3); }
+  .clip-item.selected { border-color: var(--orange); background: #FFF0E6; }
+
+  .clip-name {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--orange-dark);
+    margin-bottom: 4px;
+  }
+  .clip-mini-wave {
+    width: 100%;
+    height: 32px;
+  }
+  .clip-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 7px;
+  }
+  .clip-btn {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 0;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .clip-btn:active { transform: scale(0.95); }
+  .clip-btn-play { background: var(--orange); color: #fff; }
+  .clip-btn-redo { background: var(--panel-border); color: var(--text); }
+  .clip-btn-delete { background: #FEE2E2; color: var(--red); }
+
+  .empty-clip-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 20px 10px;
+    line-height: 1.5;
+  }
+
+  /* RIGHT — STAGE + RECORD */
+  .stage-area {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* STAGE — VISUALISER */
+  .stage {
+    background: var(--stage-bg);
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .stage-label {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stage-idle-msg {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: rgba(255,255,255,0.12);
+    text-align: center;
+    pointer-events: none;
+    line-height: 1.4;
+    padding: 0 40px;
+  }
+
+  /* STAGE FULLSCREEN */
+  .stage-fs-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    border: 2px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .stage-fs-btn:active { transform: scale(0.96); background: rgba(249,115,22,0.55); }
+  .stage-fs-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+  .stage-area:fullscreen,
+  .stage-area.fs-fallback {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    width: 100%;
+    height: 100%;
+    max-height: 100dvh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+  html.stage-fs-active { overflow: hidden; }
+  html.stage-fs-active .main { visibility: hidden; }
+  .stage-area:fullscreen .stage,
+  .stage-area.fs-fallback .stage { flex: 1; min-height: 0; }
+
+  /* RECORD BUTTON BAR */
+  .record-bar {
+    background: var(--panel);
+    border-top: 2px solid var(--panel-border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .record-bar-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .listen-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #1D4ED8, var(--shadow);
+    transition: transform 0.1s, box-shadow 0.1s;
+    flex-shrink: 0;
+  }
+  .listen-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #1D4ED8; }
+  .listen-btn.listening {
+    background: #2563EB;
+    animation: listen-pulse 1s ease-in-out infinite;
+  }
+  @keyframes listen-pulse {
+    0%,100% { box-shadow: 0 5px 0 #1D4ED8, 0 0 0 0 rgba(59,130,246,0.45); }
+    50% { box-shadow: 0 5px 0 #1D4ED8, 0 0 0 12px rgba(59,130,246,0); }
+  }
+  .listen-icon { width: 30px; height: 30px; }
+  .record-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: none;
+    background: var(--red);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #B91C1C, var(--shadow);
+    transition: transform 0.1s, box-shadow 0.1s;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .record-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #B91C1C; }
+  .record-btn.recording { background: #DC2626; animation: record-pulse 1s ease-in-out infinite; }
+  @keyframes record-pulse { 0%,100%{box-shadow:0 5px 0 #B91C1C, 0 0 0 0 rgba(239,68,68,0.4)} 50%{box-shadow:0 5px 0 #B91C1C, 0 0 0 12px rgba(239,68,68,0)} }
+
+  .record-icon { width: 28px; height: 28px; }
+  .record-icon circle { fill: #fff; }
+  .stop-icon { width: 22px; height: 22px; background: #fff; border-radius: 4px; }
+
+  .record-info {
+    flex: 1;
+  }
+  .record-info-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .record-info-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .record-timer {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--red);
+    letter-spacing: -1px;
+    min-width: 70px;
+    text-align: right;
+  }
+
+  /* TIMELINE STRIP */
+  .timeline-wrap {
+    background: #2C2420;
+    border-top: 3px solid #3D3028;
+    flex-shrink: 0;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .timeline-play-btn {
+    width: 64px;
+    height: 100%;
+    background: var(--orange);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-right: 3px solid var(--orange-dark);
+    transition: background 0.15s;
+  }
+  .timeline-play-btn:active { background: var(--orange-dark); }
+  .timeline-play-btn svg { width: 28px; height: 28px; fill: #fff; }
+
+  .timeline-track {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .timeline-track::-webkit-scrollbar { height: 3px; }
+  .timeline-track::-webkit-scrollbar-thumb { background: #4D3D30; border-radius: 3px; }
+
+  .timeline-empty {
+    color: rgba(255,255,255,0.2);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .timeline-clip {
+    height: 80px;
+    min-width: 100px;
+    background: var(--orange);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    cursor: grab;
+    flex-shrink: 0;
+    position: relative;
+    border: 2.5px solid var(--orange-dark);
+    touch-action: none;
+    transition: transform 0.1s;
+  }
+  .timeline-clip:active { cursor: grabbing; transform: scale(1.05); }
+  .timeline-clip.drag-over { border-color: #fff; border-style: dashed; }
+  .timeline-clip-name {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+  .timeline-clip canvas {
+    width: 80px;
+    height: 36px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.2);
+  }
+  .timeline-remove {
+    position: absolute;
+    top: -8px; right: -8px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--orange-dark);
+    color: var(--orange-dark);
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .timeline-drop-zone {
+    min-width: 80px;
+    height: 80px;
+    border: 2.5px dashed rgba(255,255,255,0.15);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.2);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .timeline-drop-zone.active { border-color: var(--orange); background: rgba(249,115,22,0.1); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+  }
+  .hidden { display: none !important; }
+
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    background: var(--panel);
+    border-radius: var(--radius-xl);
+    padding: 28px 28px 24px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  .modal-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .modal-body {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+  .modal-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .modal-btns.single { grid-template-columns: 1fr; }
+  .modal-btn-full { grid-column: 1 / -1; }
+  .modal-btn {
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 14px 0;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    box-shadow: var(--shadow-sm);
+  }
+  .modal-btn:active { transform: scale(0.97); }
+  .modal-btn-confirm { background: var(--green); color: #fff; box-shadow: 0 4px 0 var(--green-dark); }
+  .modal-btn-cancel { background: var(--panel-border); color: var(--text); }
+
+  /* PLAYING STATE */
+  .timeline-clip.playing { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
+
+  /* LESSON MODES — ?lesson=1 hides timeline (Lessons 2–6 use sequencing) */
+  .timeline-wrap.lesson-hidden { display: none !important; }
+  .lesson-badge {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--orange-pale);
+    border: 2px solid var(--orange-light);
+    border-radius: 100px;
+    padding: 4px 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="app-logo">Sound<span>Wave</span></div>
+  <div class="topbar-spacer"></div>
+  <span class="lesson-badge hidden" id="lessonBadge" aria-live="polite"></span>
+  <div class="status-pill" id="statusPill">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">Ready</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CLIP LIST -->
+  <div class="clip-panel">
+    <div class="clip-panel-header">My Recordings</div>
+    <div class="clip-list" id="clipList">
+      <div class="empty-clip-hint" id="clipListEmpty">
+        Press the big red button to make your first recording!
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE + RECORD (fullscreen targets this block) -->
+  <div class="stage-area" id="stageArea">
+
+    <!-- VISUALISER STAGE -->
+    <div class="stage" id="stage">
+      <button type="button" class="stage-fs-btn" id="fullscreenBtn" aria-label="Make the wave fill the screen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        <span id="fullscreenLabel">Bigger</span>
+      </button>
+      <div class="stage-label" id="stageLabel">Live</div>
+      <canvas id="visualiserCanvas"></canvas>
+      <div class="stage-idle-msg" id="stageIdleMsg">Tap the blue ear<br>to see your voice!</div>
+    </div>
+
+    <!-- RECORD BAR -->
+    <div class="record-bar">
+      <div class="record-bar-controls">
+        <button type="button" class="listen-btn" id="listenBtn" aria-label="Listen to your voice on the wave">
+          <svg class="listen-icon" viewBox="0 0 28 28" id="listenIcon" aria-hidden="true">
+            <path fill="currentColor" d="M14 5a4.5 4.5 0 0 0-4.5 4.5v5A4.5 4.5 0 0 0 14 19a4.5 4.5 0 0 0 4.5-4.5v-5A4.5 4.5 0 0 0 14 5zm0 18.5a9 9 0 0 0 9-9h-2.2a6.8 6.8 0 0 1-13.6 0H5a9 9 0 0 0 9 9z"/>
+          </svg>
+        </button>
+        <button type="button" class="record-btn" id="recordBtn" aria-label="Start or stop recording">
+          <svg class="record-icon" viewBox="0 0 28 28" id="recordIcon">
+            <circle cx="14" cy="14" r="10"/>
+          </svg>
+        </button>
+      </div>
+      <div class="record-info">
+        <div class="record-info-title" id="recordTitle">Listen or Record</div>
+        <div class="record-info-sub" id="recordSub">Blue ear to explore · Red button to save</div>
+      </div>
+      <div class="record-timer hidden" id="recordTimer">0:00</div>
+    </div>
+
+    <!-- TIMELINE (hidden on ?lesson=1) -->
+    <div class="timeline-wrap" id="timelineWrap">
+      <button type="button" class="timeline-play-btn" id="timelinePlayBtn" aria-label="Play all recordings in order">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="timeline-track" id="timelineTrack">
+        <div class="timeline-empty" id="timelineEmpty">Drag your recordings here to build your sequence →</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHILD-FRIENDLY MESSAGES (errors, mic help) -->
+<div class="modal-overlay hidden" id="kidOverlay" role="dialog" aria-modal="true" aria-labelledby="kidTitle">
+  <div class="modal">
+    <div class="modal-icon" id="kidIcon">🎤</div>
+    <div class="modal-title" id="kidTitle">Hello!</div>
+    <div class="modal-body" id="kidBody">Message goes here.</div>
+    <div class="modal-btns single">
+      <button type="button" class="modal-btn modal-btn-confirm modal-btn-full" id="kidOkBtn">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL (save / redo / delete — one openModal() flow) -->
+<div class="modal-overlay hidden" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-icon" id="modalIcon" aria-hidden="true">💾</div>
+    <div class="modal-title" id="modalTitle">Save this recording?</div>
+    <div class="modal-body" id="modalBody">Are you happy with it? Once saved you can use it in your sequence.</div>
+    <div class="modal-btns" id="modalBtns">
+      <button type="button" class="modal-btn modal-btn-cancel" id="modalCancel">No, redo it</button>
+      <button type="button" class="modal-btn modal-btn-confirm" id="modalConfirm">Yes, save it!</button>
+    </div>
+  </div>
+</div>
+<script>
+/* SoundWave Studio — Tier 2 module (inlined into HTML) */
+(function SoundWaveStudio() {
+  'use strict';
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CONFIG & LESSON MODE  (?lesson=1 … ?lesson=6, or omit for full studio)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const CONFIG = {
+    MAX_RECORD_SECONDS: 45,
+    MIC_INTRO_KEY: 'soundwave_mic_intro_seen',
+  };
+
+  const TIMELINE_HINTS = {
+    2: 'Drag your poem parts here — put them in order →',
+    3: 'Drag recordings here to build your sequence →',
+    4: 'Drag recordings here to build your sequence →',
+    5: 'Drag recordings here to build your sequence →',
+    6: 'Drag recordings here for your final piece →',
+  };
+
+  function parseLessonMode() {
+    const raw = new URLSearchParams(location.search).get('lesson');
+    const n = parseInt(raw, 10);
+    if (n >= 1 && n <= 6) {
+      return { number: n, timelineEnabled: n >= 2, label: `Lesson ${n}` };
+    }
+    return { number: 0, timelineEnabled: true, label: '' };
+  }
+
+  const LESSON = parseLessonMode();
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STATE
+  // ═══════════════════════════════════════════════════════════════════════════
+  const state = {
+    clips: [],
+    timeline: [],
+    listening: false,
+    recording: false,
+    audioCtx: null,
+    analyser: null,
+    stream: null,
+    mediaRecorder: null,
+    animFrame: null,
+    recordStart: null,
+    timerInterval: null,
+    pendingBuffer: null,
+    pendingChunks: [],
+    redoTarget: null,
+    stoppedAtMaxLength: false,
+    warnedAlmostDone: false,
+  };
+
+  let pendingSave = { waveform: null, duration: 0 };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DOM REFERENCES
+  // ═══════════════════════════════════════════════════════════════════════════
+  const dom = {
+    listenBtn: document.getElementById('listenBtn'),
+    listenIcon: document.getElementById('listenIcon'),
+    recordBtn: document.getElementById('recordBtn'),
+    recordIcon: document.getElementById('recordIcon'),
+    recordTitle: document.getElementById('recordTitle'),
+    recordSub: document.getElementById('recordSub'),
+    recordTimer: document.getElementById('recordTimer'),
+    statusDot: document.getElementById('statusDot'),
+    statusText: document.getElementById('statusText'),
+    stageIdleMsg: document.getElementById('stageIdleMsg'),
+    stageLabel: document.getElementById('stageLabel'),
+    stage: document.getElementById('stage'),
+    stageArea: document.getElementById('stageArea'),
+    fullscreenBtn: document.getElementById('fullscreenBtn'),
+    fullscreenLabel: document.getElementById('fullscreenLabel'),
+    visualiserCanvas: document.getElementById('visualiserCanvas'),
+    clipList: document.getElementById('clipList'),
+    clipListEmpty: document.getElementById('clipListEmpty'),
+    timelineWrap: document.getElementById('timelineWrap'),
+    timelineTrack: document.getElementById('timelineTrack'),
+    timelineEmpty: document.getElementById('timelineEmpty'),
+    timelinePlayBtn: document.getElementById('timelinePlayBtn'),
+    lessonBadge: document.getElementById('lessonBadge'),
+    kidOverlay: document.getElementById('kidOverlay'),
+    kidIcon: document.getElementById('kidIcon'),
+    kidTitle: document.getElementById('kidTitle'),
+    kidBody: document.getElementById('kidBody'),
+    kidOkBtn: document.getElementById('kidOkBtn'),
+    modalOverlay: document.getElementById('modalOverlay'),
+    modalIcon: document.getElementById('modalIcon'),
+    modalTitle: document.getElementById('modalTitle'),
+    modalBody: document.getElementById('modalBody'),
+    modalBtns: document.getElementById('modalBtns'),
+    modalConfirm: document.getElementById('modalConfirm'),
+    modalCancel: document.getElementById('modalCancel'),
+  };
+
+  const ctx2d = dom.visualiserCanvas.getContext('2d');
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // UI & MODAL MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
+  let modalSession = null;
+  let kidSession = null;
+
+  function resetModalChrome() {
+    dom.modalCancel.classList.remove('hidden');
+    dom.modalBtns.classList.remove('single');
+    dom.modalConfirm.classList.remove('modal-btn-danger');
+    dom.modalConfirm.style.background = '';
+    dom.modalConfirm.style.boxShadow = '';
+  }
+
+  /** @returns {Promise<'confirm'|'cancel'>} */
+  function openModal(opts) {
+    if (modalSession) closeModal('cancel');
+
+    return new Promise((resolve) => {
+      modalSession = { resolve };
+
+      dom.modalIcon.textContent = opts.icon ?? '💬';
+      dom.modalTitle.textContent = opts.title ?? '';
+      dom.modalBody.textContent = opts.body ?? '';
+      dom.modalConfirm.textContent = opts.confirmText ?? 'OK';
+      dom.modalCancel.textContent = opts.cancelText ?? 'Cancel';
+
+      const single = opts.singleButton === true;
+      dom.modalCancel.classList.toggle('hidden', single);
+      dom.modalBtns.classList.toggle('single', single);
+
+      resetModalChrome();
+      if (opts.confirmDanger) {
+        dom.modalConfirm.classList.add('modal-btn-danger');
+        dom.modalConfirm.style.background = 'var(--red)';
+        dom.modalConfirm.style.boxShadow = '0 4px 0 #B91C1C';
+      }
+
+      dom.modalOverlay.classList.remove('hidden');
+    });
+  }
+
+  function closeModal(result) {
+    if (!modalSession) return;
+    modalSession.resolve(result);
+    modalSession = null;
+    dom.modalOverlay.classList.add('hidden');
+    resetModalChrome();
+  }
+
+  function showKidMessage({ icon, title, body, okText = 'OK, got it!' }) {
+    if (kidSession) kidSession.resolve();
+
+    return new Promise((resolve) => {
+      kidSession = { resolve };
+      dom.kidIcon.textContent = icon;
+      dom.kidTitle.textContent = title;
+      dom.kidBody.textContent = body;
+      dom.kidOkBtn.textContent = okText;
+      dom.kidOverlay.classList.remove('hidden');
+    });
+  }
+
+  function closeKidMessage() {
+    if (!kidSession) return;
+    kidSession.resolve();
+    kidSession = null;
+    dom.kidOverlay.classList.add('hidden');
+  }
+
+  function micErrorMessage(err) {
+    const name = err && err.name ? err.name : '';
+    if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+      return {
+        icon: '🙉',
+        title: "We can't hear you yet",
+        body: 'The microphone is turned off. Ask a grown-up to tap Allow on the screen, or check Settings so this app can use the microphone.',
+      };
+    }
+    if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+      return {
+        icon: '🔍',
+        title: 'No microphone found',
+        body: "We couldn't find a microphone on this device. Ask a grown-up to check your iPad or computer is set up correctly.",
+      };
+    }
+    if (name === 'NotReadableError' || name === 'TrackStartError') {
+      return {
+        icon: '🎧',
+        title: 'Microphone is busy',
+        body: 'Something else might be using the microphone. Ask a grown-up to close other apps, then try again.',
+      };
+    }
+    if (!window.isSecureContext) {
+      return {
+        icon: '📂',
+        title: 'Open it the special way',
+        body: "This page needs to be opened the way your teacher showed you (not from a file on the desktop). Ask a grown-up if you're not sure.",
+      };
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      return {
+        icon: '💻',
+        title: "This browser can't record",
+        body: 'Try opening SoundWave in Safari or Chrome. Ask a grown-up to help you use a different browser.',
+      };
+    }
+    return {
+      icon: '😕',
+      title: 'Something went wrong',
+      body: "We couldn't start recording. Ask a grown-up to help you try again.",
+    };
+  }
+
+  function applyLessonMode() {
+    if (LESSON.label) {
+      dom.lessonBadge.textContent = LESSON.label;
+      dom.lessonBadge.classList.remove('hidden');
+    }
+
+    if (!LESSON.timelineEnabled) {
+      dom.timelineWrap.classList.add('lesson-hidden');
+      dom.clipListEmpty.textContent = 'Press the big red button to make your first recording!';
+      dom.stageIdleMsg.innerHTML = 'Tap the blue ear<br>to see your voice!';
+    } else {
+      dom.timelineEmpty.textContent =
+        TIMELINE_HINTS[LESSON.number] || 'Drag your recordings here to build your sequence →';
+    }
+    setBarIdle();
+  }
+
+  function setBarIdle() {
+    if (state.listening || state.recording) return;
+    dom.recordTitle.textContent = 'Listen or Record';
+    dom.recordSub.textContent = LESSON.timelineEnabled
+      ? 'Blue ear to explore · Red button to record'
+      : 'Blue ear to explore · Red button to save a recording';
+    dom.statusDot.classList.remove('recording', 'listening');
+    dom.statusText.textContent = 'Ready';
+    dom.stageLabel.textContent = 'Live';
+  }
+
+  function resetRecordUI() {
+    dom.recordBtn.classList.remove('recording');
+    dom.recordIcon.innerHTML = '<circle cx="14" cy="14" r="10"/>';
+    dom.recordTimer.classList.add('hidden');
+    dom.recordTimer.textContent = '0:00';
+    dom.statusDot.classList.remove('recording');
+    if (!state.listening) setBarIdle();
+  }
+
+  function resetListenUI() {
+    dom.listenBtn.classList.remove('listening');
+    dom.statusDot.classList.remove('listening');
+    if (!state.recording) setBarIdle();
+  }
+
+  function clearStageToLive() {
+    ctx2d.clearRect(0, 0, dom.visualiserCanvas.width, dom.visualiserCanvas.height);
+    dom.stageIdleMsg.style.display = '';
+    dom.stageLabel.textContent = 'Live';
+  }
+
+  function cancelPendingRecording() {
+    state.redoTarget = null;
+    state.pendingBuffer = null;
+    pendingSave = { waveform: null, duration: 0 };
+    clearStageToLive();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // WEB AUDIO ENGINE
+  // ═══════════════════════════════════════════════════════════════════════════
+  const AudioEngine = {
+    async getCtx() {
+      if (!state.audioCtx || state.audioCtx.state === 'closed') {
+        state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (state.audioCtx.state === 'suspended') await state.audioCtx.resume();
+      return state.audioCtx;
+    },
+
+    resizeCanvas() {
+      const w = dom.stage.clientWidth;
+      const h = dom.stage.clientHeight;
+      dom.visualiserCanvas.width = w * devicePixelRatio;
+      dom.visualiserCanvas.height = h * devicePixelRatio;
+      dom.visualiserCanvas.style.width = w + 'px';
+      dom.visualiserCanvas.style.height = h + 'px';
+    },
+
+    drawLiveWave(analyser) {
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.6;
+      const bufLen = analyser.fftSize;
+      const dataArr = new Uint8Array(bufLen);
+      const displayBuf = new Float32Array(bufLen).fill(128);
+      const DECAY = 0.55;
+      const SENSITIVITY = 0.85;
+      const canvas = dom.visualiserCanvas;
+
+      function draw() {
+        state.animFrame = requestAnimationFrame(draw);
+        analyser.getByteTimeDomainData(dataArr);
+
+        for (let i = 0; i < bufLen; i++) {
+          const scaled = 128 + (dataArr[i] - 128) * SENSITIVITY;
+          displayBuf[i] = displayBuf[i] * DECAY + scaled * (1 - DECAY);
+        }
+
+        const smoothed = new Float32Array(bufLen);
+        for (let i = 0; i < bufLen; i++) {
+          smoothed[i] =
+            (displayBuf[Math.max(0, i - 1)] + displayBuf[i] + displayBuf[Math.min(bufLen - 1, i + 1)]) / 3;
+        }
+
+        const W = canvas.width;
+        const H = canvas.height;
+        ctx2d.clearRect(0, 0, W, H);
+
+        ctx2d.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx2d.lineWidth = 1;
+        for (let i = 0; i < 5; i++) {
+          const y = (H / 4) * i;
+          ctx2d.beginPath();
+          ctx2d.moveTo(0, y);
+          ctx2d.lineTo(W, y);
+          ctx2d.stroke();
+        }
+
+        ctx2d.strokeStyle = 'rgba(249,115,22,0.2)';
+        ctx2d.beginPath();
+        ctx2d.moveTo(0, H / 2);
+        ctx2d.lineTo(W, H / 2);
+        ctx2d.stroke();
+
+        ctx2d.lineWidth = 3 * devicePixelRatio;
+        ctx2d.strokeStyle = '#F97316';
+        ctx2d.lineJoin = 'round';
+        ctx2d.lineCap = 'round';
+
+        const sliceW = W / bufLen;
+        ctx2d.beginPath();
+        let x = 0;
+        for (let i = 0; i < bufLen; i++) {
+          const y = ((smoothed[i] / 128.0) * H) / 2;
+          if (i === 0) {
+            ctx2d.moveTo(x, y);
+          } else {
+            const prevX = (i - 1) * sliceW;
+            const prevY = ((smoothed[i - 1] / 128.0) * H) / 2;
+            const cpX = (prevX + x) / 2;
+            ctx2d.bezierCurveTo(cpX, prevY, cpX, y, x, y);
+          }
+          x += sliceW;
+        }
+        ctx2d.stroke();
+      }
+      draw();
+    },
+
+    drawSavedWave(targetCanvas, waveformData) {
+      const c = targetCanvas.getContext('2d');
+      const W = targetCanvas.width;
+      const H = targetCanvas.height;
+      c.clearRect(0, 0, W, H);
+      c.strokeStyle = '#F97316';
+      c.lineWidth = 1.5;
+      c.lineJoin = 'round';
+      c.beginPath();
+      for (let i = 0; i < W; i++) {
+        const dataIndex = Math.floor((i / W) * waveformData.length);
+        const y = ((waveformData[dataIndex] / 128.0) * H) / 2;
+        i === 0 ? c.moveTo(i, y) : c.lineTo(i, y);
+      }
+      c.stroke();
+    },
+
+    extractWaveform(audioBuffer) {
+      const raw = audioBuffer.getChannelData(0);
+      const samples = 512;
+      const blockSize = Math.floor(raw.length / samples);
+      const result = new Uint8Array(samples);
+      for (let i = 0; i < samples; i++) {
+        let sum = 0;
+        for (let j = 0; j < blockSize; j++) sum += Math.abs(raw[i * blockSize + j]);
+        result[i] = Math.round(128 + (sum / blockSize) * 127);
+      }
+      return result;
+    },
+
+    showSavedWaveOnStage(waveformData) {
+      const W = dom.visualiserCanvas.width;
+      const H = dom.visualiserCanvas.height;
+      ctx2d.clearRect(0, 0, W, H);
+      ctx2d.strokeStyle = 'rgba(249,115,22,0.2)';
+      ctx2d.lineWidth = 1;
+      ctx2d.beginPath();
+      ctx2d.moveTo(0, H / 2);
+      ctx2d.lineTo(W, H / 2);
+      ctx2d.stroke();
+      ctx2d.lineWidth = 3 * devicePixelRatio;
+      ctx2d.strokeStyle = '#FB923C';
+      ctx2d.lineJoin = 'round';
+      ctx2d.beginPath();
+      for (let i = 0; i < W; i++) {
+        const dataIndex = Math.floor((i / W) * waveformData.length);
+        const y = ((waveformData[dataIndex] / 128.0) * H) / 2;
+        i === 0 ? ctx2d.moveTo(i, y) : ctx2d.lineTo(i, y);
+      }
+      ctx2d.stroke();
+    },
+
+    async decodeRecordingBlob(blob) {
+      const arrayBuffer = await blob.arrayBuffer();
+      const audioCtx = await AudioEngine.getCtx();
+      return audioCtx.decodeAudioData(arrayBuffer);
+    },
+
+    releaseMic() {
+      cancelAnimationFrame(state.animFrame);
+      state.animFrame = null;
+      if (state.stream) {
+        state.stream.getTracks().forEach((t) => t.stop());
+        state.stream = null;
+      }
+      state.analyser = null;
+    },
+
+    async openMic() {
+      const audioCtx = await AudioEngine.getCtx();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const source = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      source.connect(analyser);
+      state.stream = stream;
+      state.analyser = analyser;
+      return analyser;
+    },
+  };
+
+  // ─── Microphone access (shared by Listen + Record) ─────────────────────────
+  async function showMicIntro() {
+    return showKidMessage({
+      icon: '🎤',
+      title: 'Can we hear your voice?',
+      body: 'SoundWave needs to use the microphone. In a moment, a message will pop up at the top of the screen — tap Allow. If you don\'t see it, ask a grown-up to help.',
+      okText: "Let's try!",
+    });
+  }
+
+  function requestMicAccess(onReady) {
+    if (!sessionStorage.getItem(CONFIG.MIC_INTRO_KEY)) {
+      showMicIntro().then(() => {
+        sessionStorage.setItem(CONFIG.MIC_INTRO_KEY, '1');
+        onReady();
+      });
+    } else {
+      onReady();
+    }
+  }
+
+  async function ensureMicEnvironment() {
+    if (!window.isSecureContext) {
+      const msg = micErrorMessage({ name: 'InsecureContext' });
+      await showKidMessage({ ...msg, okText: 'OK' });
+      return false;
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      const msg = micErrorMessage({ name: 'NotSupported' });
+      await showKidMessage({ ...msg, okText: 'OK' });
+      return false;
+    }
+    return true;
+  }
+
+  // ─── Listen-only mode (live wave, no recording saved) ─────────────────────
+  function stopListening() {
+    if (!state.listening) return;
+    state.listening = false;
+    AudioEngine.releaseMic();
+    dom.listenBtn.classList.remove('listening');
+    resetListenUI();
+    clearStageToLive();
+  }
+
+  function requestListening() {
+    if (state.recording) return;
+    if (state.listening) {
+      stopListening();
+      return;
+    }
+    requestMicAccess(() => startListening());
+  }
+
+  async function startListening() {
+    if (state.listening || state.recording) return;
+    if (!(await ensureMicEnvironment())) return;
+
+    try {
+      const analyser = await AudioEngine.openMic();
+      state.listening = true;
+
+      dom.stageIdleMsg.style.display = 'none';
+      dom.stageLabel.textContent = '● Listening';
+      dom.listenBtn.classList.add('listening');
+      dom.recordTitle.textContent = 'Listening…';
+      dom.recordSub.textContent = 'Nothing is being saved — tap the blue ear to stop';
+      dom.statusDot.classList.add('listening');
+      dom.statusText.textContent = 'Listening';
+
+      AudioEngine.drawLiveWave(analyser);
+    } catch (err) {
+      console.error(err);
+      const msg = micErrorMessage(err);
+      await showKidMessage({ ...msg, okText: "OK, I'll ask a grown-up" });
+    }
+  }
+
+  // ─── Fullscreen (stage area — wave fills screen, controls stay visible) ───
+  const Fullscreen = {
+    isActive() {
+      return (
+        document.fullscreenElement === dom.stageArea ||
+        dom.stageArea.classList.contains('fs-fallback')
+      );
+    },
+
+    updateButton() {
+      const on = this.isActive();
+      dom.fullscreenLabel.textContent = on ? 'Smaller' : 'Bigger';
+      dom.fullscreenBtn.setAttribute(
+        'aria-label',
+        on ? 'Exit full screen' : 'Make the wave fill the screen'
+      );
+    },
+
+    enterFallback() {
+      dom.stageArea.classList.add('fs-fallback');
+      document.documentElement.classList.add('stage-fs-active');
+      this.updateButton();
+      AudioEngine.resizeCanvas();
+    },
+
+    exitFallback() {
+      dom.stageArea.classList.remove('fs-fallback');
+      document.documentElement.classList.remove('stage-fs-active');
+      this.updateButton();
+      AudioEngine.resizeCanvas();
+    },
+
+    async enter() {
+      const el = dom.stageArea;
+      try {
+        if (el.requestFullscreen) await el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else this.enterFallback();
+      } catch {
+        this.enterFallback();
+      }
+      this.updateButton();
+      AudioEngine.resizeCanvas();
+    },
+
+    async exit() {
+      if (document.fullscreenElement) {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+      this.exitFallback();
+    },
+
+    toggle() {
+      if (this.isActive()) this.exit();
+      else this.enter();
+    },
+
+    init() {
+      const onFsChange = () => {
+        if (!document.fullscreenElement && !dom.stageArea.classList.contains('fs-fallback')) {
+          this.updateButton();
+          AudioEngine.resizeCanvas();
+        } else if (document.fullscreenElement === dom.stageArea) {
+          this.updateButton();
+          AudioEngine.resizeCanvas();
+        }
+      };
+      document.addEventListener('fullscreenchange', onFsChange);
+      document.addEventListener('webkitfullscreenchange', onFsChange);
+      dom.fullscreenBtn.addEventListener('click', () => this.toggle());
+    },
+  };
+
+  // ─── Recording flow ───────────────────────────────────────────────────────
+  function requestRecording() {
+    if (state.recording) {
+      stopRecording();
+      return;
+    }
+    if (state.listening) stopListening();
+    requestMicAccess(() => startRecording());
+  }
+
+  async function startRecording() {
+    if (state.recording) return;
+    if (!(await ensureMicEnvironment())) return;
+
+    try {
+      const analyser = await AudioEngine.openMic();
+      state.pendingChunks = [];
+      const chunks = state.pendingChunks;
+
+      const mr = new MediaRecorder(state.stream);
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      mr.start();
+
+      state.mediaRecorder = mr;
+      state.recording = true;
+      state.recordStart = Date.now();
+      state.stoppedAtMaxLength = false;
+      state.warnedAlmostDone = false;
+
+      dom.stageIdleMsg.style.display = 'none';
+      dom.stageLabel.textContent = '● Recording';
+      dom.recordBtn.classList.add('recording');
+      dom.recordIcon.innerHTML = '<rect x="7" y="7" width="14" height="14" rx="3" fill="white"/>';
+      dom.recordTitle.textContent = 'Recording…';
+      dom.recordSub.textContent = `You can record for up to ${CONFIG.MAX_RECORD_SECONDS} seconds`;
+      dom.recordTimer.classList.remove('hidden');
+      dom.statusDot.classList.add('recording');
+      dom.statusText.textContent = 'Recording';
+
+      state.timerInterval = setInterval(() => {
+        const elapsed = (Date.now() - state.recordStart) / 1000;
+        const m = Math.floor(elapsed / 60);
+        const s = Math.floor(elapsed % 60)
+          .toString()
+          .padStart(2, '0');
+        dom.recordTimer.textContent = `${m}:${s}`;
+
+        const left = Math.ceil(CONFIG.MAX_RECORD_SECONDS - elapsed);
+        if (left <= 10 && left > 0) {
+          dom.recordSub.textContent = `${left} second${left === 1 ? '' : 's'} left!`;
+        } else if (!state.warnedAlmostDone && elapsed >= CONFIG.MAX_RECORD_SECONDS - 10) {
+          state.warnedAlmostDone = true;
+          dom.recordSub.textContent = 'Nearly time to stop — finish your sentence!';
+        }
+
+        if (elapsed >= CONFIG.MAX_RECORD_SECONDS) {
+          state.stoppedAtMaxLength = true;
+          stopRecording();
+        }
+      }, 100);
+
+      AudioEngine.drawLiveWave(analyser);
+    } catch (err) {
+      console.error(err);
+      const msg = micErrorMessage(err);
+      await showKidMessage({ ...msg, okText: "OK, I'll ask a grown-up" });
+    }
+  }
+
+  async function stopRecording() {
+    if (!state.recording || !state.mediaRecorder || !state.stream) return;
+
+    state.recording = false;
+    cancelAnimationFrame(state.animFrame);
+    clearInterval(state.timerInterval);
+
+    const mr = state.mediaRecorder;
+
+    return new Promise((resolve) => {
+      mr.onstop = async () => {
+        AudioEngine.releaseMic();
+        state.mediaRecorder = null;
+
+        try {
+          const blob = new Blob(state.pendingChunks, { type: 'audio/webm' });
+          if (!blob.size) {
+            await showKidMessage({
+              icon: '🤫',
+              title: "We didn't hear anything",
+              body: 'That recording was very short or very quiet. Try again and speak a little louder into the microphone.',
+              okText: 'Try again',
+            });
+            resetRecordUI();
+            clearStageToLive();
+            resolve();
+            return;
+          }
+
+          const audioBuffer = await AudioEngine.decodeRecordingBlob(blob);
+          state.pendingBuffer = { blob, audioBuffer };
+          const waveformData = AudioEngine.extractWaveform(audioBuffer);
+          AudioEngine.showSavedWaveOnStage(waveformData);
+          resetRecordUI();
+          await promptSaveRecording(waveformData, audioBuffer.duration);
+        } catch (err) {
+          console.error(err);
+          resetRecordUI();
+          await showKidMessage({
+            icon: '😕',
+            title: "Couldn't play that back",
+            body: 'Something went wrong with your recording. Ask a grown-up to help you try once more.',
+            okText: 'OK',
+          });
+          cancelPendingRecording();
+        }
+        resolve();
+      };
+
+      mr.stop();
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CLIPS, TIMELINE & RENDERING
+  // ═══════════════════════════════════════════════════════════════════════════
+  async function promptSaveRecording(waveformData, duration) {
+    pendingSave = { waveform: waveformData, duration };
+
+    let opts;
+    if (state.stoppedAtMaxLength) {
+      state.stoppedAtMaxLength = false;
+      opts = {
+        icon: '⏱️',
+        title: "Time's up!",
+        body: `${CONFIG.MAX_RECORD_SECONDS} seconds is the longest recording. Well done! Do you want to save it?`,
+        confirmText: 'Yes, save it!',
+        cancelText: 'No, redo it',
+      };
+    } else if (state.redoTarget) {
+      const existing = state.clips.find((c) => c.id === state.redoTarget);
+      opts = {
+        icon: '🔁',
+        title: `Replace ${existing ? existing.name : 'this clip'}?`,
+        body: 'This will overwrite your old recording. Are you sure?',
+        confirmText: 'Yes, replace it',
+        cancelText: 'No, keep old',
+      };
+    } else {
+      const seqHint = LESSON.timelineEnabled
+        ? ' Once saved you can add it to your sequence.'
+        : '';
+      opts = {
+        icon: '💾',
+        title: 'Save this recording?',
+        body: `Happy with it?${seqHint}`,
+        confirmText: 'Yes, save it!',
+        cancelText: 'No, redo it',
+      };
+    }
+
+    const action = await openModal(opts);
+    if (action === 'confirm') {
+      saveClip(pendingSave.waveform, pendingSave.duration);
+    } else {
+      cancelPendingRecording();
+    }
+    pendingSave = { waveform: null, duration: 0 };
+  }
+
+  function saveClip(waveformData, duration) {
+    if (!state.pendingBuffer) return;
+
+    if (state.redoTarget) {
+      const idx = state.clips.findIndex((c) => c.id === state.redoTarget);
+      if (idx !== -1) {
+        Object.assign(state.clips[idx], {
+          blob: state.pendingBuffer.blob,
+          audioBuffer: state.pendingBuffer.audioBuffer,
+          waveformData,
+          duration,
+        });
+        renderClipList();
+        renderTimeline();
+      }
+      state.redoTarget = null;
+    } else {
+      state.clips.push({
+        id: 'clip_' + Date.now(),
+        name: `Part ${state.clips.length + 1}`,
+        blob: state.pendingBuffer.blob,
+        audioBuffer: state.pendingBuffer.audioBuffer,
+        waveformData,
+        duration,
+      });
+      renderClipList();
+    }
+
+    state.pendingBuffer = null;
+    clearStageToLive();
+  }
+
+  function renderClipList() {
+    dom.clipList.querySelectorAll('.clip-item').forEach((el) => el.remove());
+
+    if (state.clips.length === 0) {
+      dom.clipListEmpty.style.display = '';
+      return;
+    }
+    dom.clipListEmpty.style.display = 'none';
+
+    state.clips.forEach((clip) => {
+      const item = document.createElement('div');
+      item.className = 'clip-item';
+      item.dataset.clipId = clip.id;
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'clip-name';
+      nameEl.textContent = clip.name;
+
+      const miniCanvas = document.createElement('canvas');
+      miniCanvas.className = 'clip-mini-wave';
+      miniCanvas.width = 180;
+      miniCanvas.height = 32;
+      AudioEngine.drawSavedWave(miniCanvas, clip.waveformData);
+
+      const controls = document.createElement('div');
+      controls.className = 'clip-controls';
+
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'clip-btn clip-btn-play';
+      playBtn.textContent = '▶ Play';
+      playBtn.setAttribute('aria-label', `Play ${clip.name}`);
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        Playback.playClip(clip);
+      });
+
+      const redoBtn = document.createElement('button');
+      redoBtn.type = 'button';
+      redoBtn.className = 'clip-btn clip-btn-redo';
+      redoBtn.textContent = '↩ Redo';
+      redoBtn.setAttribute('aria-label', `Record again instead of ${clip.name}`);
+      redoBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        confirmRedo(clip.id);
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'clip-btn clip-btn-delete';
+      deleteBtn.textContent = '✕ Delete';
+      deleteBtn.setAttribute('aria-label', `Delete ${clip.name}`);
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        confirmDelete(clip.id);
+      });
+
+      controls.append(playBtn, redoBtn, deleteBtn);
+      item.append(nameEl, miniCanvas, controls);
+
+      if (LESSON.timelineEnabled) {
+        DragDrop.attachClipListDrag(item, clip.id);
+      }
+
+      dom.clipList.appendChild(item);
+    });
+  }
+
+  function renderTimeline() {
+    if (!LESSON.timelineEnabled) return;
+
+    dom.timelineTrack.querySelectorAll('.timeline-clip').forEach((el) => el.remove());
+
+    if (state.timeline.length === 0) {
+      dom.timelineEmpty.style.display = '';
+      return;
+    }
+    dom.timelineEmpty.style.display = 'none';
+
+    state.timeline.forEach((clipId, index) => {
+      const clip = state.clips.find((c) => c.id === clipId);
+      if (!clip) return;
+
+      const tc = document.createElement('div');
+      tc.className = 'timeline-clip';
+      tc.dataset.timelineIndex = String(index);
+
+      const name = document.createElement('div');
+      name.className = 'timeline-clip-name';
+      name.textContent = clip.name;
+
+      const miniCanvas = document.createElement('canvas');
+      miniCanvas.width = 80;
+      miniCanvas.height = 36;
+      AudioEngine.drawSavedWave(miniCanvas, clip.waveformData);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'timeline-remove';
+      removeBtn.textContent = '×';
+      removeBtn.setAttribute('aria-label', `Remove ${clip.name} from timeline`);
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.timeline.splice(index, 1);
+        renderTimeline();
+      });
+
+      tc.append(name, miniCanvas, removeBtn);
+      DragDrop.attachTimelineReorder(tc, index);
+      dom.timelineTrack.appendChild(tc);
+    });
+  }
+
+  async function confirmRedo(clipId) {
+    const clip = state.clips.find((c) => c.id === clipId);
+    const action = await openModal({
+      icon: '🔁',
+      title: `Redo ${clip ? clip.name : 'this clip'}?`,
+      body: 'Press record to make a new version. Your old one will be replaced.',
+      confirmText: "OK, let's record",
+      cancelText: 'Cancel',
+    });
+
+    if (action === 'confirm') {
+      state.redoTarget = clipId;
+      requestRecording();
+    }
+  }
+
+  async function confirmDelete(clipId) {
+    const clip = state.clips.find((c) => c.id === clipId);
+    const action = await openModal({
+      icon: '🗑️',
+      title: `Delete ${clip ? clip.name : 'this clip'}?`,
+      body: 'This cannot be undone. The recording will be gone for good.',
+      confirmText: 'Yes, delete it',
+      cancelText: 'No, keep it',
+      confirmDanger: true,
+    });
+
+    if (action !== 'confirm') return;
+
+    state.clips = state.clips.filter((c) => c.id !== clipId);
+    state.timeline = state.timeline.filter((id) => id !== clipId);
+    state.clips.forEach((c, i) => {
+      c.name = `Part ${i + 1}`;
+    });
+    renderClipList();
+    renderTimeline();
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DRAG AND DROP
+  // ═══════════════════════════════════════════════════════════════════════════
+  const DragDrop = {
+    highlightDropZone(x, y) {
+      const rect = dom.timelineTrack.getBoundingClientRect();
+      const inside =
+        x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+      dom.timelineTrack.style.background = inside ? 'rgba(249,115,22,0.1)' : '';
+    },
+
+    clearDropHighlights() {
+      dom.timelineTrack.style.background = '';
+    },
+
+    dropOnTimeline(x, y, clipId) {
+      const rect = dom.timelineTrack.getBoundingClientRect();
+      if (
+        x >= rect.left &&
+        x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom &&
+        !state.timeline.includes(clipId)
+      ) {
+        state.timeline.push(clipId);
+        renderTimeline();
+      }
+    },
+
+    attachClipListDrag(el, clipId) {
+      let startX, startY, clone, dragging = false;
+
+      el.addEventListener(
+        'touchstart',
+        (e) => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        },
+        { passive: true }
+      );
+
+      el.addEventListener(
+        'touchmove',
+        (e) => {
+          const dx = e.touches[0].clientX - startX;
+          const dy = e.touches[0].clientY - startY;
+          if (!dragging && Math.hypot(dx, dy) > 8) {
+            dragging = true;
+            clone = el.cloneNode(true);
+            clone.style.cssText = `position:fixed;z-index:999;opacity:0.85;pointer-events:none;width:${el.offsetWidth}px;transform:scale(1.05);`;
+            document.body.appendChild(clone);
+          }
+          if (dragging && clone) {
+            clone.style.left = e.touches[0].clientX - el.offsetWidth / 2 + 'px';
+            clone.style.top = e.touches[0].clientY - 40 + 'px';
+            DragDrop.highlightDropZone(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        },
+        { passive: true }
+      );
+
+      el.addEventListener('touchend', (e) => {
+        if (dragging && clone) {
+          document.body.removeChild(clone);
+          const touch = e.changedTouches[0];
+          DragDrop.dropOnTimeline(touch.clientX, touch.clientY, clipId);
+        }
+        dragging = false;
+        clone = null;
+        DragDrop.clearDropHighlights();
+      });
+
+      el.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        clone = el.cloneNode(true);
+        clone.style.cssText = `position:fixed;z-index:999;opacity:0.85;pointer-events:none;width:${el.offsetWidth}px;transform:scale(1.05);`;
+        document.body.appendChild(clone);
+
+        const onMove = (ev) => {
+          clone.style.left = ev.clientX - el.offsetWidth / 2 + 'px';
+          clone.style.top = ev.clientY - 40 + 'px';
+          DragDrop.highlightDropZone(ev.clientX, ev.clientY);
+        };
+        const onUp = (ev) => {
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          if (clone?.parentNode) document.body.removeChild(clone);
+          DragDrop.dropOnTimeline(ev.clientX, ev.clientY, clipId);
+          clone = null;
+          DragDrop.clearDropHighlights();
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    },
+
+    attachTimelineReorder(el, index) {
+      let startX, clone, dragging = false;
+
+      const onStart = (clientX) => {
+        startX = clientX;
+      };
+
+      const onMove = (clientX) => {
+        const dx = clientX - startX;
+        if (!dragging && Math.abs(dx) > 8) {
+          dragging = true;
+          clone = el.cloneNode(true);
+          clone.style.cssText = `position:fixed;z-index:999;opacity:0.85;pointer-events:none;height:80px;min-width:100px;top:${el.getBoundingClientRect().top}px;`;
+          document.body.appendChild(clone);
+          el.style.opacity = '0.3';
+        }
+        if (dragging && clone) clone.style.left = clientX - 60 + 'px';
+      };
+
+      const onEnd = (clientX) => {
+        if (dragging) {
+          if (clone?.parentNode) document.body.removeChild(clone);
+          el.style.opacity = '';
+          const clips = [...dom.timelineTrack.querySelectorAll('.timeline-clip')];
+          let nearest = index;
+          let minDist = Infinity;
+          clips.forEach((c, i) => {
+            const rect = c.getBoundingClientRect();
+            const dist = Math.abs(clientX - (rect.left + rect.width / 2));
+            if (dist < minDist) {
+              minDist = dist;
+              nearest = i;
+            }
+          });
+          if (nearest !== index) {
+            const item = state.timeline.splice(index, 1)[0];
+            state.timeline.splice(nearest, 0, item);
+            renderTimeline();
+          }
+        }
+        dragging = false;
+        clone = null;
+      };
+
+      el.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+      el.addEventListener(
+        'touchmove',
+        (e) => {
+          e.preventDefault();
+          onMove(e.touches[0].clientX);
+        },
+        { passive: false }
+      );
+      el.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientX));
+
+      el.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        onStart(e.clientX);
+        const onMv = (ev) => onMove(ev.clientX);
+        const onUp = (ev) => {
+          onEnd(ev.clientX);
+          document.removeEventListener('mousemove', onMv);
+          document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMv);
+        document.addEventListener('mouseup', onUp);
+      });
+    },
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PLAYBACK
+  // ═══════════════════════════════════════════════════════════════════════════
+  const Playback = {
+    async playClip(clip) {
+      const audioCtx = await AudioEngine.getCtx();
+      const source = audioCtx.createBufferSource();
+      source.buffer = clip.audioBuffer;
+      source.connect(audioCtx.destination);
+      source.start();
+
+      AudioEngine.showSavedWaveOnStage(clip.waveformData);
+      dom.stageIdleMsg.style.display = 'none';
+      dom.stageLabel.textContent = `Playing: ${clip.name}`;
+      source.onended = () => clearStageToLive();
+    },
+
+    async playTimeline() {
+      if (!LESSON.timelineEnabled || state.timeline.length === 0) return;
+
+      const audioCtx = await AudioEngine.getCtx();
+      let time = audioCtx.currentTime + 0.1;
+      const timelineClips = state.timeline
+        .map((id) => state.clips.find((c) => c.id === id))
+        .filter(Boolean);
+      const tlEls = dom.timelineTrack.querySelectorAll('.timeline-clip');
+
+      dom.timelinePlayBtn.querySelector('svg').innerHTML =
+        '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>';
+
+      timelineClips.forEach((clip, i) => {
+        const source = audioCtx.createBufferSource();
+        source.buffer = clip.audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start(time);
+
+        const startAt = time;
+        setTimeout(() => {
+          tlEls[i]?.classList.add('playing');
+          AudioEngine.showSavedWaveOnStage(clip.waveformData);
+          dom.stageLabel.textContent = `Playing: ${clip.name}`;
+        }, (startAt - audioCtx.currentTime) * 1000);
+
+        source.onended = () => {
+          tlEls[i]?.classList.remove('playing');
+          if (i === timelineClips.length - 1) {
+            clearStageToLive();
+            dom.timelinePlayBtn.querySelector('svg').innerHTML =
+              '<path d="M8 5v14l11-7z"/>';
+          }
+        };
+
+        time += clip.audioBuffer.duration + 0.15;
+      });
+    },
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // INIT
+  // ═══════════════════════════════════════════════════════════════════════════
+  function init() {
+    dom.modalConfirm.addEventListener('click', () => closeModal('confirm'));
+    dom.modalCancel.addEventListener('click', () => closeModal('cancel'));
+    dom.kidOkBtn.addEventListener('click', closeKidMessage);
+
+    dom.listenBtn.addEventListener('click', requestListening);
+    dom.recordBtn.addEventListener('click', requestRecording);
+
+    dom.timelinePlayBtn.addEventListener('click', () => Playback.playTimeline());
+    window.addEventListener('resize', () => AudioEngine.resizeCanvas());
+
+    Fullscreen.init();
+    AudioEngine.resizeCanvas();
+    applyLessonMode();
+  }
+
+  init();
+})();
+
+</script>
+</body>
+</html>

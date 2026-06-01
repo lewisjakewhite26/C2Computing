@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1 – What Does Sound Look Like? | KS1 Computing</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+  }
+
+  .header {
+    background: #c8421a;
+    color: #fff;
+    padding: 24px 36px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  .header-meta {
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    opacity: 0.72;
+    margin-bottom: 5px;
+  }
+  .header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20pt;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 3px;
+  }
+  .header-sub {
+    font-size: 11pt;
+    font-weight: 600;
+    opacity: 0.82;
+  }
+  .header-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 20px;
+    padding: 2px 11px;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .page { padding: 22px 36px 28px; }
+
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 8.5pt;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #c8421a;
+    border-bottom: 2px solid #c8421a;
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .info-card {
+    background: #faf7f4;
+    border-left: 3px solid #c8421a;
+    border-radius: 0 5px 5px 0;
+    padding: 10px 13px;
+  }
+  .info-card p, .info-card li { font-size: 10pt; line-height: 1.55; }
+  .info-card ul { padding-left: 16px; }
+  .info-card li { margin-bottom: 2px; }
+  .info-card-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #c8421a;
+    margin-bottom: 4px;
+  }
+
+  /* OBJECTIVES */
+  .obj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .obj-card {
+    border: 1.5px solid #e0d4c8;
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: #fff;
+  }
+  .obj-tier {
+    font-size: 7.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 5px;
+  }
+  .tier-all { color: #1a5c28; }
+  .tier-most { color: #7a5200; }
+  .tier-some { color: #7a3010; }
+  .obj-card p { font-size: 9.5pt; line-height: 1.5; }
+
+  /* PHASE TABLE */
+  .phase-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+    margin-top: 4px;
+  }
+  .phase-table th {
+    background: #c8421a;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 11px;
+    text-align: left;
+  }
+  .phase-table td {
+    padding: 9px 11px;
+    vertical-align: top;
+    border-bottom: 1px solid #e8ddd5;
+    line-height: 1.5;
+  }
+  .phase-table tr:last-child td { border-bottom: none; }
+  .phase-table tr:nth-child(even) td { background: #faf7f4; }
+
+  .phase-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 9.5pt;
+    color: #c8421a;
+    white-space: nowrap;
+  }
+  .phase-time {
+    font-size: 8pt;
+    color: #888;
+    font-weight: 600;
+    display: block;
+    margin-top: 1px;
+  }
+  .phase-title {
+    font-weight: 700;
+    font-size: 10pt;
+    margin-bottom: 3px;
+  }
+  .phase-body { font-size: 9.5pt; color: #333; line-height: 1.55; }
+  .phase-body ul { padding-left: 16px; margin-top: 4px; }
+  .phase-body li { margin-bottom: 3px; }
+
+  .q-box {
+    background: #fff8f5;
+    border: 1px dashed #d4a88a;
+    border-radius: 5px;
+    padding: 7px 10px;
+    margin-top: 7px;
+    font-size: 9pt;
+    color: #5a2a0a;
+    line-height: 1.5;
+  }
+  .q-box strong { color: #c8421a; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 3px; }
+
+  .device-badge {
+    display: inline-block;
+    background: #e8f0fa;
+    color: #1a4a8a;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .no-device-badge {
+    display: inline-block;
+    background: #e6f4ea;
+    color: #1a5c28;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* VOCAB */
+  .vocab-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .vocab-pill {
+    background: #faf7f4;
+    border: 1.5px solid #d4a88a;
+    border-radius: 20px;
+    padding: 3px 11px;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #7a3010;
+  }
+
+  /* SUPPORT/STRETCH */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .diff-card {
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 9.5pt;
+    line-height: 1.5;
+  }
+  .diff-support { background: #e6f4ea; border-left: 3px solid #2a7a3a; }
+  .diff-core { background: #faf7f4; border-left: 3px solid #c8421a; }
+  .diff-stretch { background: #fff3e0; border-left: 3px solid #b36a00; }
+  .diff-label {
+    font-size: 7.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+  }
+  .diff-support .diff-label { color: #1a5c28; }
+  .diff-core .diff-label { color: #c8421a; }
+  .diff-stretch .diff-label { color: #7a4a00; }
+
+  /* ASSESSMENT */
+  .assess-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .assess-card {
+    background: #faf7f4;
+    border-radius: 6px;
+    padding: 10px 13px;
+    font-size: 9.5pt;
+    line-height: 1.5;
+  }
+  .assess-label {
+    font-size: 7.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #c8421a;
+    margin-bottom: 4px;
+  }
+
+  /* RESOURCES */
+  .res-list { list-style: none; padding: 0; margin-top: 4px; }
+  .res-list li {
+    font-size: 9.5pt;
+    padding: 5px 0;
+    border-bottom: 1px solid #e8ddd5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .res-list li:last-child { border-bottom: none; }
+  .res-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #c8421a;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .note-box {
+    background: #fff8f5;
+    border: 1.5px solid #f0c8a0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 9.5pt;
+    line-height: 1.55;
+    margin-top: 20px;
+  }
+  .note-box strong { color: #c8421a; display: block; margin-bottom: 3px; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  @media print {
+    body { font-size: 10.5pt; }
+    .page { padding: 16px 28px 22px; }
+    .header { padding: 18px 28px 14px; }
+    .section-title { margin-top: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-meta">KS1 &nbsp;·&nbsp; Cycle B &nbsp;·&nbsp; Summer 2 &nbsp;·&nbsp; Computing &nbsp;·&nbsp; Lesson 1 of 6</div>
+  <h1>What Does Sound Look Like?</h1>
+  <div class="header-sub">Creating Media: Audio Recording &nbsp;·&nbsp; Amazing Africa</div>
+  <div class="header-tags">
+    <span class="tag">Year 1 / Year 2</span>
+    <span class="tag">45–60 mins</span>
+    <span class="tag">Whole class + pairs</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- OBJECTIVES -->
+  <div class="section-title">Learning Objectives</div>
+  <div class="obj-grid">
+    <div class="obj-card">
+      <div class="obj-tier tier-all">All pupils</div>
+      <p>Know that sound can be seen as a wave on a screen and that the wave changes when the sound changes.</p>
+    </div>
+    <div class="obj-card">
+      <div class="obj-tier tier-most">Most pupils</div>
+      <p>Record a short sound, see its waveform and play it back using the class app.</p>
+    </div>
+    <div class="obj-card">
+      <div class="obj-tier tier-some">Some pupils</div>
+      <p>Begin to describe how they could change a recording to make the wave look and sound different.</p>
+    </div>
+  </div>
+
+  <!-- KEY VOCAB -->
+  <div class="section-title">Key Vocabulary This Lesson</div>
+  <div class="vocab-row">
+    <span class="vocab-pill">sound wave</span>
+    <span class="vocab-pill">digital</span>
+    <span class="vocab-pill">microphone</span>
+    <span class="vocab-pill">record</span>
+    <span class="vocab-pill">playback</span>
+    <span class="vocab-pill">volume</span>
+    <span class="vocab-pill">data</span>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="section-title">Resources Needed</div>
+  <div class="two-col">
+    <ul class="res-list">
+      <li><span class="res-dot"></span>Audio clip with visible soundwave on smartboard — starting quiet and simple, building to loud and complex (cued up and tested before lesson)</li>
+      <li><span class="res-dot"></span><strong>SoundWave Studio</strong> on smartboard — hosted link open, microphone allowed, large red record button visible (same file as pupil iPads)</li>
+      <li><span class="res-dot"></span>iPads — 1 per pair, <strong>SoundWave Studio</strong> bookmarked and open at Lesson 1 mode (<code style="font-size:8.5pt;">?lesson=1</code> on the URL — hides the timeline strip so pupils only record and play back)</li>
+    </ul>
+    <ul class="res-list">
+      <li><span class="res-dot"></span>Headphones — 1 pair per pupil (checked and working before lesson)</li>
+      <li><span class="res-dot"></span>Talking stem on display: "The wave goes _______ when I _______."</li>
+      <li><span class="res-dot"></span>File: <em>soundwave-studio.html</em> on your school web space or learning platform (must be opened via a web link, not from the desktop — otherwise the microphone will not work)</li>
+    </ul>
+  </div>
+
+  <!-- PHASES -->
+  <div class="section-title">Lesson Sequence</div>
+  <table class="phase-table">
+    <thead>
+      <tr>
+        <th style="width:16%;">Phase</th>
+        <th style="width:84%;">Teacher Activity &amp; Pupil Task</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>
+          <span class="phase-label">Hook</span>
+          <span class="phase-time">5 mins</span>
+          <span class="no-device-badge">smartboard</span>
+        </td>
+        <td>
+          <div class="phase-title">Watch the sound grow</div>
+          <div class="phase-body">
+            Without saying anything, play the audio clip on the smartboard with the waveform visible. The clip starts quiet and simple — the wave is small and flat. As the sound builds in volume and complexity, pupils watch the wave grow, spike and fill the screen.
+            <br><br>
+            Let it play out. Then ask: "What did you notice happening to the picture as the sound got louder?" Take a few answers. Do not explain yet — just let them describe what they saw.
+            <div class="q-box">
+              <strong>Questioning</strong>
+              "What happened to the wave when the sound got bigger?" &nbsp;·&nbsp; "Why do you think the picture changed?" &nbsp;·&nbsp; "What do you think that picture is showing us?"
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <span class="phase-label">Explain</span>
+          <span class="phase-time">8 mins</span>
+          <span class="no-device-badge">teacher demo</span>
+        </td>
+        <td>
+          <div class="phase-title">Sound is data</div>
+          <div class="phase-body">
+            Open <strong>SoundWave Studio</strong> on the smartboard. Tap the <strong>blue ear</strong> (Listen). Before saying anything, point to the wave — it is flat. Then speak normally into the microphone and let pupils watch it react in real time (nothing is saved in Listen mode).
+            <br><br>
+            Do the same with a whisper, then a loud voice, then silence. Ask pupils what they notice each time.
+            <ul>
+              <li>Introduce <strong>microphone</strong> — it listens and turns sound into data the computer can store.</li>
+              <li>Introduce <strong>sound wave</strong> — the shape the computer draws to show us that data.</li>
+              <li>Introduce <strong>digital</strong> — stored on a device, not on paper or in the air.</li>
+            </ul>
+            <div class="q-box">
+              <strong>Check for understanding</strong>
+              "What happens to the wave when I stop talking?" &nbsp;·&nbsp; "So what do you think a really loud sound would look like?" &nbsp;·&nbsp; "Has anyone seen anything like this before — on a phone, a computer, anywhere?"
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <span class="phase-label">Explore</span>
+          <span class="phase-time">10 mins</span>
+          <span class="device-badge">devices on</span>
+        </td>
+        <td>
+          <div class="phase-title">Have a go</div>
+          <div class="phase-body">
+            Pupils put headphones on and open <strong>SoundWave Studio</strong> on the iPad (Lesson 1 link). They tap the <strong>blue ear</strong> (Listen) and watch the orange wave react to their own voice. Nothing is saved — they are just exploring.
+            <ul>
+              <li>Whisper a word. Watch the wave.</li>
+              <li>Say the same word at normal volume. Compare.</li>
+              <li>Stay silent for a few seconds. Watch it flatten.</li>
+              <li>Tap the blue ear again to stop. Optional: tap <strong>Bigger</strong> on the wave for full-screen view on the board or iPad.</li>
+            </ul>
+            Stop the class briefly. Take two or three observations: "What did you find out about your wave?"
+            <div class="q-box">
+              <strong>Talk prompt on display</strong>
+              "The wave goes _______ when I _______."
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <span class="phase-label">Record</span>
+          <span class="phase-time">12 mins</span>
+          <span class="device-badge">devices on</span>
+        </td>
+        <td>
+          <div class="phase-title">First recording</div>
+          <div class="phase-body">
+            Model on the smartboard in SoundWave: tap record, say a short phrase clearly ("The lion roars across the savannah"), tap stop. Tap <strong>Yes, save it!</strong> Show the saved waveform in <strong>My Recordings</strong>. Tap <strong>▶ Play</strong>.
+            <br><br>
+            Pupils each record <strong>one short phrase</strong> — it can be their name, a favourite animal, or a phrase from the Africa theme. They then:
+            <ol style="padding-left:18px; margin-top:4px;">
+              <li>Tap stop, then <strong>Yes, save it!</strong></li>
+              <li>Look at the waveform in My Recordings.</li>
+              <li>Tap <strong>▶ Play</strong> and check it sounds clear.</li>
+              <li>Optional: tap record again and save a second clip — compare the two waves in the list (loud vs quiet, or a second take).</li>
+            </ol>
+            <div class="q-box">
+              <strong>Circulate and ask</strong>
+              "Can you point to where you were speaking loudly on the wave?" &nbsp;·&nbsp; "Does your wave look the same as your partner's? Why might it be different?" &nbsp;·&nbsp; "Which recording is clearer — how can you tell from looking?"
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <span class="phase-label">Reflect</span>
+          <span class="phase-time">8 mins</span>
+          <span class="no-device-badge">devices down</span>
+        </td>
+        <td>
+          <div class="phase-title">What did we find out?</div>
+          <div class="phase-body">
+            Two or three pairs share their recording with the class on the smartboard (open their clip in SoundWave and play it, or replay from the teacher iPad). Point at features of the waveform together: "Can you see where they started speaking? Can you see a quiet gap?"
+            <br><br>
+            Return to the question from the hook: can a computer see sound? Take answers. Establish: yes — it turns sound into data and draws it as a wave. That wave tells us about the sound even before we press play.
+            <br><br>
+            Preview next lesson: "Next time you are going to record five parts of a poem — and start to arrange them in order."
+            <div class="q-box">
+              <strong>Exit question (verbal — show of hands)</strong>
+              "If I recorded a loud clap and a quiet whisper, which waveform would have bigger peaks?" &nbsp;·&nbsp; "What does the word <em>digital</em> mean?"
+            </div>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- DIFFERENTIATION -->
+  <div class="section-title">Differentiation</div>
+  <div class="diff-grid">
+    <div class="diff-card diff-support">
+      <div class="diff-label">Support</div>
+      Pre-load SoundWave Studio (Lesson 1 link) on the iPad before the lesson; check microphone is allowed. Provide a printed sentence strip with a phrase ready to record. The adult focuses on the language: help pupils say "the wave goes up when I am loud" rather than just pointing.
+    </div>
+    <div class="diff-card diff-core">
+      <div class="diff-label">Core</div>
+      Record one phrase, view the waveform, play back. Encouraged to try a second recording and compare the two waves. Use talk prompts on display.
+    </div>
+    <div class="diff-card diff-stretch">
+      <div class="diff-label">Stretch</div>
+      Record two contrasting phrases (one loud, one quiet) and describe the difference in the waveforms. Begin thinking about which sounds they might want in their poem and why. Can they predict what the wave will look like before they record?
+    </div>
+  </div>
+
+  <!-- ASSESSMENT -->
+  <div class="section-title">Assessment Opportunities</div>
+  <div class="assess-grid">
+    <div class="assess-card">
+      <div class="assess-label">Observe</div>
+      Can pupils describe what the waveform is showing? Do they notice it changes with volume? Do they make a connection between what they heard and what they see on screen?
+    </div>
+    <div class="assess-card">
+      <div class="assess-label">Listen</div>
+      During the reflect phase: can pupils explain in their own words that sound becomes data? Can they use any of the key vocabulary correctly and independently?
+    </div>
+    <div class="assess-card">
+      <div class="assess-label">Working towards</div>
+      Needs support to press record and can say the wave moves when there is sound.
+    </div>
+    <div class="assess-card">
+      <div class="assess-label">Greater depth</div>
+      Can describe the waveform using vocabulary (loud = bigger peaks, quiet = smaller) and begins to make predictions before recording.
+    </div>
+  </div>
+
+  <div class="section-title">Useful Links</div>
+  <ul class="res-list">
+    <li><span class="res-dot"></span>
+      <span><strong>Sound for Kids – Loudness, Pitch and Timbre</strong> &nbsp;·&nbsp; <em>Learn Bright</em><br>
+      <span style="font-size:9pt; color:#555;">Covers how sound behaves and how we describe it — good as a stimulus or revision clip. Relevant to the hook and explain phases.</span><br>
+      <a href="https://www.youtube.com/watch?v=9QSwD73ujPI" style="font-size:9pt; color:#c8421a;">youtube.com/watch?v=9QSwD73ujPI</a></span>
+    </li>
+    <li><span class="res-dot"></span>
+      <span><strong>What is Sound?</strong> &nbsp;·&nbsp; <em>SciShow Kids</em><br>
+      <span style="font-size:9pt; color:#555;">Explains how vibrations create sound waves and how they reach our ears. Clear visuals, child-friendly pace — useful background for pupils or as a pre-lesson watch.</span><br>
+      <a href="https://www.youtube.com/watch?v=3-xKZKxXuu0" style="font-size:9pt; color:#c8421a;">youtube.com/watch?v=3-xKZKxXuu0</a></span>
+    </li>
+    <li><span class="res-dot"></span>
+      <span><strong>How Does Sound Travel?</strong> &nbsp;·&nbsp; <em>BBC Teach (KS1 Science)</em><br>
+      <span style="font-size:9pt; color:#555;">BBC-produced, curriculum-aligned film investigating how sound moves through materials. Supports the science behind the lesson and cross-curricular links.</span><br>
+      <a href="https://www.youtube.com/watch?v=0PlBNOCOAuk" style="font-size:9pt; color:#c8421a;">youtube.com/watch?v=0PlBNOCOAuk</a></span>
+    </li>
+  </ul>
+
+  <div class="note-box">
+    <strong>Teacher note — SoundWave Studio (not Voice Memos)</strong>
+  This unit uses one app throughout: <strong>SoundWave Studio</strong> on the smartboard and on pupil iPads. It matches the lesson visuals (orange wave, big red record button, child-friendly messages) and avoids switching between different apps.
+    <br><br>
+    <strong>Before the lesson:</strong> Upload the HTML file to your school site or open it from a shared link. Test on one iPad — tap Allow when asked for the microphone. Use <strong>?lesson=1</strong> on the URL for this lesson. Bookmarks on each iPad save time.
+    <br><br>
+    The focus is conceptual — pupils leave knowing that sound has a digital form that can be seen. Do not worry if recordings are unclear or short; that becomes the focus from Lesson 2 onwards. The most important moment is the live waveform demo: give it time and let pupils react before moving on.
+  </div>
+
+</div>
+
+</body>
+</html>
