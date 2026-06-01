@@ -42,6 +42,8 @@ Repo: https://github.com/lewisjakewhite26/C2Computing
 
 ## SoundWave controls
 
-- **Blue ear button** — Listen only (live wave, nothing saved)
-- **Red button** — Record (max 45 seconds)
+- **Blue button** (`hearing` icon) — Listen only (live wave, nothing saved)
+- **Red button** (`record` icon) — Record (max 45 seconds)
 - **Bigger** — Fullscreen wave area
+
+Icons: [Material Symbols Rounded](https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Rounded) (Google Fonts CDN).
