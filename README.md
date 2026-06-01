@@ -8,8 +8,8 @@ After **Settings → Pages** is set to deploy from branch `main` / root (wait 1�
 
 | Use | URL |
 |-----|-----|
-| **Lesson 1 (iPads)** | https://lewisjakewhite26.github.io/C2Computing/soundwave-studio.html?lesson=1 |
-| **Home (same as Lesson 1)** | https://lewisjakewhite26.github.io/C2Computing/ |
+| **Teaching slides (smartboard)** | https://lewisjakewhite26.github.io/C2Computing/ |
+| **Lesson 1 app (iPads)** | https://lewisjakewhite26.github.io/C2Computing/soundwave-studio.html?lesson=1 |
 | **Lesson plan (print)** | https://lewisjakewhite26.github.io/C2Computing/ks1-audio-lesson1.html |
 | **Full studio** | https://lewisjakewhite26.github.io/C2Computing/soundwave-studio.html |
 
@@ -19,9 +19,9 @@ Repo: https://github.com/lewisjakewhite26/C2Computing
 
 | File | Purpose |
 |------|---------|
-| `soundwave-studio.html` | Pupil & teacher app |
+| `index.html` | **Teaching slides** — one-page vertical deck for the smartboard |
+| `soundwave-studio.html` | Pupil & teacher recording app |
 | `ks1-audio-lesson1.html` | Printable Lesson 1 plan |
-| `index.html` | Sends visitors to Lesson 1 app |
 
 ## Enable GitHub Pages (one-time)
 

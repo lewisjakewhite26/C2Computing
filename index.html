@@ -1,14 +1,754 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=soundwave-studio.html?lesson=1">
-  <title>SoundWave Studio</title>
-  <link rel="canonical" href="soundwave-studio.html?lesson=1">
-  <script>location.replace('soundwave-studio.html?lesson=1');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1 — What Does Sound Look Like? | KS1 Computing</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F97316;
+    --orange-dark: #EA580C;
+    --orange-pale: #FFF7ED;
+    --orange-light: #FED7AA;
+    --bg: #F5F0EB;
+    --panel: #FFFFFF;
+    --text: #1C1917;
+    --text-muted: #78716C;
+    --blue: #3B82F6;
+    --red: #EF4444;
+    --green: #16A34A;
+    --slide-count: 10;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+  }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    overflow-x: hidden;
+  }
+
+  .material-symbols-rounded {
+    font-family: 'Material Symbols Rounded';
+    font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+    line-height: 1;
+  }
+
+  /* ─── SLIDE SHELL ─── */
+  .slide {
+    min-height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 64px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-inner {
+    max-width: 920px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .slide-number {
+    position: absolute;
+    top: 28px;
+    right: 36px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--text-muted);
+    opacity: 0.55;
+    letter-spacing: 0.06em;
+  }
+
+  /* ─── NAV DOTS ─── */
+  .slide-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .slide-nav a {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--orange-light);
+    border: 2px solid var(--orange);
+    opacity: 0.45;
+    transition: opacity 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+  .slide-nav a:hover,
+  .slide-nav a.active { opacity: 1; transform: scale(1.2); }
+
+  .scroll-hint {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0.5;
+    z-index: 50;
+    pointer-events: none;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(4px)} }
+
+  /* ─── TYPOGRAPHY ─── */
+  .meta {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange-dark);
+    margin-bottom: 14px;
+  }
+  .slide h1 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .slide h2 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    line-height: 1.12;
+    margin-bottom: 20px;
+  }
+  .slide-lead {
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+    line-height: 1.55;
+    color: var(--text-muted);
+    font-weight: 600;
+    max-width: 680px;
+  }
+
+  /* ─── SLIDE THEMES ─── */
+  .slide--title {
+    background: linear-gradient(145deg, #EA580C 0%, #F97316 45%, #FB923C 100%);
+    color: #fff;
+  }
+  .slide--title .meta { color: rgba(255,255,255,0.75); }
+  .slide--title .slide-lead { color: rgba(255,255,255,0.88); }
+  .slide--title .tag-row { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .slide--title .tag {
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .slide--light { background: var(--bg); }
+  .slide--white { background: var(--panel); }
+  .slide--dark {
+    background: #1C1917;
+    color: #fff;
+  }
+  .slide--dark .slide-lead { color: rgba(255,255,255,0.65); }
+  .slide--dark .meta { color: var(--orange); }
+
+  .slide--talk {
+    background: var(--orange-pale);
+    border-top: 6px solid var(--orange);
+    border-bottom: 6px solid var(--orange);
+  }
+
+  /* ─── COMPONENTS ─── */
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange-pale);
+    border: 2px solid var(--orange-light);
+    border-radius: 100px;
+    padding: 6px 16px 6px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--orange-dark);
+    margin-bottom: 18px;
+  }
+  .phase-badge .material-symbols-rounded { font-size: 20px; }
+  .phase-time {
+    margin-left: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  .device-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .device-pill--on { background: #DBEAFE; color: #1D4ED8; }
+  .device-pill--off { background: #DCFCE7; color: #166534; }
+
+  .obj-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .obj-card {
+    background: var(--panel);
+    border: 2.5px solid var(--orange-light);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+  }
+  .obj-tier {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 8px;
+  }
+  .tier-all { color: var(--green); }
+  .tier-most { color: #B45309; }
+  .tier-some { color: var(--orange-dark); }
+  .obj-card p { font-size: 15px; line-height: 1.5; font-weight: 600; }
+
+  .vocab-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .vocab-pill {
+    background: var(--panel);
+    border: 2px solid var(--orange-light);
+    border-radius: 100px;
+    padding: 10px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--orange-dark);
+  }
+
+  .bullet-list {
+    list-style: none;
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bullet-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.45;
+    font-weight: 600;
+  }
+  .bullet-list li .material-symbols-rounded {
+    color: var(--orange);
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .q-box {
+    margin-top: 24px;
+    background: var(--orange-pale);
+    border: 2px dashed var(--orange-light);
+    border-radius: 16px;
+    padding: 18px 22px;
+  }
+  .slide--dark .q-box {
+    background: rgba(249,115,22,0.12);
+    border-color: rgba(249,115,22,0.35);
+  }
+  .q-box-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--orange-dark);
+    margin-bottom: 8px;
+  }
+  .slide--dark .q-box-label { color: var(--orange); }
+  .q-box p {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    line-height: 1.55;
+    font-weight: 600;
+  }
+
+  .talk-stem {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.25;
+    color: var(--orange-dark);
+    text-align: center;
+    margin-top: 20px;
+  }
+  .talk-blank {
+    display: inline-block;
+    min-width: 140px;
+    border-bottom: 4px solid var(--orange);
+    margin: 0 6px;
+    opacity: 0.7;
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 14px 24px;
+    border-radius: 16px;
+    transition: transform 0.1s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn--primary {
+    background: var(--orange);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--orange-dark);
+  }
+  .btn--blue {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 4px 0 #1D4ED8;
+  }
+  .btn--ghost {
+    background: var(--panel);
+    color: var(--text);
+    border: 2px solid var(--panel-border, #E2D9D0);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.08);
+  }
+  .slide--title .btn--ghost {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border-color: rgba(255,255,255,0.35);
+    box-shadow: none;
+  }
+
+  .control-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .control-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--panel);
+    border: 2px solid #E2D9D0;
+    border-radius: 16px;
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .slide--dark .control-item {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .control-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .control-dot--blue { background: var(--blue); box-shadow: 0 3px 0 #1D4ED8; }
+  .control-dot--red { background: var(--red); box-shadow: 0 3px 0 #B91C1C; }
+  .control-dot .material-symbols-rounded { font-size: 24px; }
+  .control-item strong {
+    display: block;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .control-item span { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+  .slide--dark .control-item span { color: rgba(255,255,255,0.55); }
+
+  .deco-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    opacity: 0.08;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      var(--orange) 8px,
+      var(--orange) 10px
+    );
+    mask-image: linear-gradient(to top, black, transparent);
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 36px 24px 48px; }
+    .obj-grid { grid-template-columns: 1fr; }
+    .slide-nav { display: none; }
+    .scroll-hint { display: none; }
+  }
+
+  @media print {
+    html { scroll-snap-type: none; }
+    .slide { min-height: auto; page-break-after: always; padding: 32px; }
+    .slide-nav, .scroll-hint { display: none; }
+  }
+</style>
 </head>
 <body>
-  <p><a href="soundwave-studio.html?lesson=1">Open SoundWave Studio (Lesson 1)</a></p>
+
+<nav class="slide-nav" aria-label="Slide navigation">
+  <a href="#slide-1" title="Title" data-slide="1"></a>
+  <a href="#slide-2" title="Objectives" data-slide="2"></a>
+  <a href="#slide-3" title="Vocabulary" data-slide="3"></a>
+  <a href="#slide-4" title="Hook" data-slide="4"></a>
+  <a href="#slide-5" title="Explain" data-slide="5"></a>
+  <a href="#slide-6" title="Explore" data-slide="6"></a>
+  <a href="#slide-7" title="Record" data-slide="7"></a>
+  <a href="#slide-8" title="Reflect" data-slide="8"></a>
+  <a href="#slide-9" title="Talk stem" data-slide="9"></a>
+  <a href="#slide-10" title="Open app" data-slide="10"></a>
+</nav>
+
+<p class="scroll-hint" id="scrollHint">Scroll down ↓</p>
+
+<!-- 1 · TITLE -->
+<section class="slide slide--title" id="slide-1">
+  <span class="slide-number">1 / 10</span>
+  <div class="slide-inner">
+    <p class="meta">KS1 · Cycle B · Summer 2 · Computing · Lesson 1 of 6</p>
+    <h1>What Does Sound<br>Look Like?</h1>
+    <p class="slide-lead">Creating Media: Audio Recording · Amazing Africa</p>
+    <div class="tag-row">
+      <span class="tag">Year 1 / Year 2</span>
+      <span class="tag">45–60 mins</span>
+      <span class="tag">Whole class + pairs</span>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn--ghost" href="#slide-2">Start lesson ↓</a>
+      <a class="btn btn--ghost" href="ks1-audio-lesson1.html" target="_blank" rel="noopener">Full lesson plan</a>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · OBJECTIVES -->
+<section class="slide slide--light" id="slide-2">
+  <span class="slide-number">2 / 10</span>
+  <div class="slide-inner">
+    <p class="meta">Today we will</p>
+    <h2>Learning objectives</h2>
+    <div class="obj-grid">
+      <div class="obj-card">
+        <div class="obj-tier tier-all">All pupils</div>
+        <p>Know that sound can be seen as a wave on a screen — and the wave changes when the sound changes.</p>
+      </div>
+      <div class="obj-card">
+        <div class="obj-tier tier-most">Most pupils</div>
+        <p>Record a short sound, see its waveform and play it back using SoundWave Studio.</p>
+      </div>
+      <div class="obj-card">
+        <div class="obj-tier tier-some">Some pupils</div>
+        <p>Begin to describe how they could change a recording to make the wave look and sound different.</p>
+      </div>
+    </div>
+  </div>
+  <div class="deco-wave"></div>
+</section>
+
+<!-- 3 · VOCABULARY -->
+<section class="slide slide--white" id="slide-3">
+  <span class="slide-number">3 / 10</span>
+  <div class="slide-inner">
+    <p class="meta">Words to use today</p>
+    <h2>Key vocabulary</h2>
+    <p class="slide-lead">Listen for these words during the lesson. Can pupils use them by the end?</p>
+    <div class="vocab-row">
+      <span class="vocab-pill">sound wave</span>
+      <span class="vocab-pill">digital</span>
+      <span class="vocab-pill">microphone</span>
+      <span class="vocab-pill">record</span>
+      <span class="vocab-pill">playback</span>
+      <span class="vocab-pill">volume</span>
+      <span class="vocab-pill">data</span>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · HOOK -->
+<section class="slide slide--dark" id="slide-4">
+  <span class="slide-number">4 / 10</span>
+  <div class="slide-inner">
+    <div class="phase-badge">
+      <span class="material-symbols-rounded">play_circle</span>
+      Hook
+      <span class="phase-time">· 5 mins</span>
+      <span class="device-pill device-pill--off">Smartboard</span>
+    </div>
+    <h2>Watch the sound grow</h2>
+    <p class="slide-lead">Play your audio clip with the waveform visible. Do not explain yet — let pupils describe what they see.</p>
+    <ul class="bullet-list">
+      <li><span class="material-symbols-rounded">volume_down</span>Start quiet — the wave is small and flat.</li>
+      <li><span class="material-symbols-rounded">volume_up</span>Build louder — the wave grows and spikes.</li>
+      <li><span class="material-symbols-rounded">forum</span>Ask: <em>"What did you notice happening to the picture?"</em></li>
+    </ul>
+    <div class="q-box">
+      <div class="q-box-label">Questioning</div>
+      <p>"What happened to the wave when the sound got bigger?" · "Why do you think the picture changed?" · "What do you think that picture is showing us?"</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · EXPLAIN -->
+<section class="slide slide--light" id="slide-5">
+  <span class="slide-number">5 / 10</span>
+  <div class="slide-inner">
+    <div class="phase-badge">
+      <span class="material-symbols-rounded">school</span>
+      Explain
+      <span class="phase-time">· 8 mins</span>
+      <span class="device-pill device-pill--off">Teacher demo</span>
+    </div>
+    <h2>Sound is data</h2>
+    <p class="slide-lead">Open SoundWave on the board. Tap the blue button — speak, whisper, stay silent. Point at the wave each time.</p>
+    <div class="control-legend">
+      <div class="control-item">
+        <div class="control-dot control-dot--blue"><span class="material-symbols-rounded">hearing</span></div>
+        <div><strong>Blue button</strong><span>Listen — live wave, nothing saved</span></div>
+      </div>
+      <div class="control-item">
+        <div class="control-dot control-dot--red"><span class="material-symbols-rounded">radio_button_checked</span></div>
+        <div><strong>Red button</strong><span>Record — save a clip later</span></div>
+      </div>
+    </div>
+    <ul class="bullet-list">
+      <li><span class="material-symbols-rounded">mic</span><strong>Microphone</strong> — listens and turns sound into data.</li>
+      <li><span class="material-symbols-rounded">graphic_eq</span><strong>Sound wave</strong> — the shape the computer draws.</li>
+      <li><span class="material-symbols-rounded">save</span><strong>Digital</strong> — stored on a device, not on paper.</li>
+    </ul>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="soundwave-studio.html?lesson=1" target="_blank" rel="noopener">
+        <span class="material-symbols-rounded">open_in_new</span>
+        Open SoundWave Studio
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · EXPLORE -->
+<section class="slide slide--white" id="slide-6">
+  <span class="slide-number">6 / 10</span>
+  <div class="slide-inner">
+    <div class="phase-badge">
+      <span class="material-symbols-rounded">explore</span>
+      Explore
+      <span class="phase-time">· 10 mins</span>
+      <span class="device-pill device-pill--on">Devices on</span>
+    </div>
+    <h2>Have a go</h2>
+    <p class="slide-lead">Headphones on. Blue button only — exploring, not saving yet.</p>
+    <ul class="bullet-list">
+      <li><span class="material-symbols-rounded">hearing</span>Tap the <strong>blue button</strong> — watch your wave.</li>
+      <li><span class="material-symbols-rounded">record_voice_over</span>Whisper a word, then say it at normal volume.</li>
+      <li><span class="material-symbols-rounded">pause</span>Stay silent — watch the wave flatten.</li>
+      <li><span class="material-symbols-rounded">hearing</span>Tap blue again to stop.</li>
+    </ul>
+    <div class="q-box">
+      <div class="q-box-label">Stop &amp; share</div>
+      <p>"What did you find out about your wave?"</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · RECORD -->
+<section class="slide slide--light" id="slide-7">
+  <span class="slide-number">7 / 10</span>
+  <div class="slide-inner">
+    <div class="phase-badge">
+      <span class="material-symbols-rounded">radio_button_checked</span>
+      Record
+      <span class="phase-time">· 12 mins</span>
+      <span class="device-pill device-pill--on">Devices on</span>
+    </div>
+    <h2>First recording</h2>
+    <p class="slide-lead">Model on the board, then pupils record one short phrase (name, animal, or Africa theme).</p>
+    <ul class="bullet-list">
+      <li><span class="material-symbols-rounded">radio_button_checked</span>Tap red · speak · tap stop.</li>
+      <li><span class="material-symbols-rounded">save</span>Tap <strong>Yes, save it!</strong></li>
+      <li><span class="material-symbols-rounded">graphic_eq</span>Look at the waveform in My Recordings.</li>
+      <li><span class="material-symbols-rounded">play_arrow</span>Tap Play — does it sound clear?</li>
+    </ul>
+    <div class="q-box">
+      <div class="q-box-label">Circulate &amp; ask</div>
+      <p>"Can you point to where you spoke loudly?" · "Does your wave look like your partner's?" · "Which recording is clearer?"</p>
+    </div>
+    <p class="slide-lead" style="margin-top:20px;font-style:italic;">Model phrase: <strong>"The lion roars across the savannah."</strong></p>
+  </div>
+</section>
+
+<!-- 8 · REFLECT -->
+<section class="slide slide--dark" id="slide-8">
+  <span class="slide-number">8 / 10</span>
+  <div class="slide-inner">
+    <div class="phase-badge">
+      <span class="material-symbols-rounded">groups</span>
+      Reflect
+      <span class="phase-time">· 8 mins</span>
+      <span class="device-pill device-pill--off">Devices down</span>
+    </div>
+    <h2>What did we find out?</h2>
+    <p class="slide-lead">Share two or three recordings on the board. Point at the waveform together.</p>
+    <ul class="bullet-list">
+      <li><span class="material-symbols-rounded">visibility</span>Can a computer <strong>see</strong> sound? Yes — as data, drawn as a wave.</li>
+      <li><span class="material-symbols-rounded">graphic_eq</span>The wave tells us about the sound <em>before</em> we press play.</li>
+      <li><span class="material-symbols-rounded">arrow_forward</span>Next lesson: record five parts of a poem and put them in order.</li>
+    </ul>
+    <div class="q-box">
+      <div class="q-box-label">Exit questions · show of hands</div>
+      <p>"If I recorded a loud clap and a quiet whisper, which wave would have bigger peaks?" · "What does <em>digital</em> mean?"</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · TALK STEM -->
+<section class="slide slide--talk" id="slide-9">
+  <span class="slide-number">9 / 10</span>
+  <div class="slide-inner" style="text-align:center;">
+    <p class="meta">Talk prompt · keep on display</p>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);margin-bottom:8px;">Say it like this</h2>
+    <p class="talk-stem">
+      The wave goes<span class="talk-blank"></span><br>when I<span class="talk-blank"></span>
+    </p>
+    <p class="slide-lead" style="margin:24px auto 0;text-align:center;">Examples: "up" · "bigger" · "spiky" — "I whisper" · "I am loud"</p>
+  </div>
+</section>
+
+<!-- 10 · OPEN APP -->
+<section class="slide slide--title" id="slide-10">
+  <span class="slide-number">10 / 10</span>
+  <div class="slide-inner">
+    <p class="meta">SoundWave Studio</p>
+    <h2>Ready to teach?</h2>
+    <p class="slide-lead">Open the app on the smartboard and pupil iPads. Use Lesson 1 mode — timeline hidden, listen + record only.</p>
+    <div class="btn-row">
+      <a class="btn btn--ghost" href="soundwave-studio.html?lesson=1" target="_blank" rel="noopener">
+        <span class="material-symbols-rounded">hearing</span>
+        Open SoundWave (Lesson 1)
+      </a>
+      <a class="btn btn--ghost" href="soundwave-studio.html" target="_blank" rel="noopener">
+        <span class="material-symbols-rounded">tune</span>
+        Full studio
+      </a>
+    </div>
+    <p class="slide-lead" style="margin-top:28px;font-size:0.95rem;opacity:0.85;">
+      Pupil bookmark: <strong>soundwave-studio.html?lesson=1</strong><br>
+      <a href="ks1-audio-lesson1.html" style="color:#fff;text-underline-offset:3px;">Printable lesson plan</a>
+    </p>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  const slides = [...document.querySelectorAll('.slide')];
+  const dots = [...document.querySelectorAll('.slide-nav a')];
+  const scrollHint = document.getElementById('scrollHint');
+
+  // Highlight nav dot for current slide
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          const num = id.replace('slide-', '');
+          dots.forEach((d) => d.classList.toggle('active', d.dataset.slide === num));
+          if (num !== '1') scrollHint.style.opacity = '0';
+        }
+      });
+    },
+    { threshold: 0.55 }
+  );
+  slides.forEach((s) => observer.observe(s));
+
+  // Keyboard: ↓ / ↑ / PageDown / PageUp jump between slides
+  function scrollToSlide(index) {
+    if (index >= 0 && index < slides.length) {
+      slides[index].scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const current = dots.findIndex((d) => d.classList.contains('active'));
+    if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
+      e.preventDefault();
+      scrollToSlide(current + 1);
+    }
+    if (['ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      scrollToSlide(current - 1);
+    }
+  });
+
+  // Hide scroll hint after first scroll
+  let scrolled = false;
+  window.addEventListener('scroll', () => {
+    if (!scrolled && window.scrollY > 40) {
+      scrolled = true;
+      scrollHint.style.opacity = '0';
+    }
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
