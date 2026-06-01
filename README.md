@@ -19,7 +19,7 @@ Repo: https://github.com/lewisjakewhite26/C2Computing
 
 | File | Purpose |
 |------|---------|
-| `index.html` | **Teaching slides** — one-page vertical deck for the smartboard |
+| `index.html` | **Live teaching slides** — big board text + teacher notes bar (scroll / arrow keys) |
 | `soundwave-studio.html` | Pupil & teacher recording app |
 | `ks1-audio-lesson1.html` | Printable Lesson 1 plan |
 
