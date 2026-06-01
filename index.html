@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lesson 1 — Teaching Slides | KS1 Computing</title>
+<title>Lesson 1: Teaching Slides | KS1 Computing</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0&display=swap" rel="stylesheet">
 <style>
@@ -14,7 +14,7 @@
     --orange-light: #FED7AA;
     --bg: #F5F0EB;
     --text: #1C1917;
-    --text-muted: #78716C;
+    --text-muted: #44403C;
     --blue: #3B82F6;
     --red: #EF4444;
     --green: #16A34A;
@@ -25,6 +25,7 @@
   html {
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
+    touch-action: pan-y;
   }
 
   body {
@@ -50,15 +51,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px 56px 100px;
+    padding: 40px 56px;
     position: relative;
     text-align: center;
   }
 
   .slide--dark { background: #1C1917; color: #fff; }
-  .slide--dark .board-sub { color: rgba(255,255,255,0.65); }
+  .slide--dark .board-sub { color: #fff; }
   .slide--orange { background: linear-gradient(160deg, #EA580C, #F97316); color: #fff; }
-  .slide--orange .board-sub { color: rgba(255,255,255,0.88); }
+  .slide--orange .board-sub { color: #fff; }
   .slide--pale { background: var(--orange-pale); }
   .slide--white { background: #fff; }
   .slide--light { background: var(--bg); }
@@ -67,31 +68,38 @@
   .board {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
-    line-height: 1.12;
+    font-size: clamp(2.8rem, 7.5vw, 5.5rem);
+    line-height: 1.1;
     letter-spacing: -0.02em;
     max-width: 14ch;
     margin: 0 auto;
+    color: var(--text);
   }
-  .board--wide { max-width: 20ch; font-size: clamp(1.8rem, 5vw, 3.6rem); }
-  .board--huge { font-size: clamp(2.8rem, 8vw, 5.5rem); max-width: 12ch; }
+  .board--wide { max-width: 22ch; font-size: clamp(2.4rem, 6.5vw, 4.75rem); }
+  .board--huge { font-size: clamp(3.5rem, 9vw, 6.5rem); max-width: 12ch; }
   .board-sub {
     font-family: 'Nunito Sans', sans-serif;
     font-weight: 700;
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-    line-height: 1.45;
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    line-height: 1.4;
     color: var(--text-muted);
-    max-width: 28ch;
-    margin: 20px auto 0;
+    max-width: 32ch;
+    margin: 24px auto 0;
   }
+  .slide--dark .board,
+  .slide--orange .board { color: #fff; }
   .slide--dark .board-sub,
-  .slide--orange .board-sub { color: rgba(255,255,255,0.8); }
+  .slide--orange .board-sub { color: #fff; }
+  .slide--devices-on .board-sub,
+  .slide--devices-off .board-sub { color: #fff; }
+  .board-sub--banner { margin-top: 20px; }
+  .board-sub--label { margin-bottom: 20px; }
 
   .board-icon {
     display: block;
-    font-size: clamp(3.5rem, 10vw, 6rem);
-    margin-bottom: 16px;
-    color: var(--orange);
+    font-size: clamp(4.5rem, 12vw, 7.5rem);
+    margin-bottom: 20px;
+    color: var(--orange-dark);
   }
   .slide--orange .board-icon,
   .slide--dark .board-icon { color: #fff; }
@@ -101,37 +109,37 @@
   .vocab-word {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(3rem, 10vw, 6rem);
-    color: var(--orange-dark);
+    font-size: clamp(3.8rem, 12vw, 7.5rem);
+    color: #C2410C;
     letter-spacing: -0.03em;
     line-height: 1;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   .slide--dark .vocab-word { color: var(--orange); }
 
   .talk-stem {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(2rem, 6vw, 4rem);
+    font-size: clamp(2.6rem, 7.5vw, 5rem);
     line-height: 1.3;
-    color: var(--orange-dark);
+    color: #C2410C;
   }
   .blank {
     display: inline-block;
-    min-width: clamp(80px, 18vw, 180px);
-    border-bottom: 5px solid var(--orange);
-    margin: 0 8px;
-    opacity: 0.65;
+    min-width: clamp(100px, 20vw, 220px);
+    border-bottom: 6px solid #C2410C;
+    margin: 0 10px;
+    opacity: 0.85;
   }
 
   .model-phrase {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(1.6rem, 4.5vw, 3rem);
+    font-size: clamp(2.2rem, 5.5vw, 3.75rem);
     line-height: 1.25;
-    color: var(--orange-dark);
+    color: #C2410C;
     font-style: italic;
-    max-width: 22ch;
+    max-width: 24ch;
     margin: 0 auto;
   }
 
@@ -139,109 +147,179 @@
   .device-banner {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: clamp(2.6rem, 6.5vw, 4.75rem);
     letter-spacing: 0.02em;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 20px;
   }
   .device-banner .material-symbols-rounded { font-size: 1.2em; }
-  .slide--devices-on { background: #1E3A8A; color: #fff; }
-  .slide--devices-off { background: #14532D; color: #fff; }
+  .slide--devices-on { background: #1E40AF; color: #fff; }
+  .slide--devices-off { background: #166534; color: #fff; }
 
   /* ─── STEP NUMBER ─── */
   .step-num {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: clamp(4rem, 12vw, 8rem);
+    font-size: clamp(4.5rem, 13vw, 9rem);
     line-height: 1;
-    color: var(--orange-light);
-    margin-bottom: 8px;
+    color: #EA580C;
+    margin-bottom: 12px;
   }
-  .slide--dark .step-num { color: rgba(249,115,22,0.35); }
+  .slide--dark .step-num { color: #FB923C; }
 
-  /* ─── PHASE TAG (small, top-left) ─── */
-  .phase-tag {
-    position: absolute;
-    top: 24px;
-    left: 28px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    opacity: 0.7;
+  /* ─── LIVE DEMO (s10) ─── */
+  .slide--demo {
+    justify-content: flex-start;
+    padding: 20px 0 28px;
+    gap: 20px;
+    background: var(--orange-pale);
   }
-  .slide--dark .phase-tag,
-  .slide--orange .phase-tag { color: rgba(255,255,255,0.45); }
-
-  .slide-index {
-    position: absolute;
-    top: 24px;
-    right: 28px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    color: var(--text-muted);
-    opacity: 0.4;
+  .slide-demo-title {
+    flex-shrink: 0;
+    padding: 0 40px;
+    margin-top: 48px;
+    max-width: 26ch;
+    font-size: clamp(2rem, 5.5vw, 3.5rem);
+    color: #1C1917;
   }
-  .slide--dark .slide-index,
-  .slide--orange .slide-index { color: rgba(255,255,255,0.35); }
-
-  /* ─── TEACHER CUE BAR (your script — bottom of slide) ─── */
-  .teacher-cue {
+  .slide-demo-stage {
+    width: 100%;
+    flex: 1;
+    min-height: min(50vh, 520px);
+    position: relative;
+    overflow: hidden;
+  }
+  .slide-demo-stage canvas {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(28, 25, 23, 0.92);
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .slide-demo-controls {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .listen-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    background: var(--blue);
     color: #fff;
-    padding: 14px 28px;
-    text-align: left;
-    border-top: 3px solid var(--orange);
-    transition: transform 0.25s ease, opacity 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 5px 0 #1D4ED8;
+    transition: transform 0.1s, box-shadow 0.1s;
   }
-  body.notes-hidden .teacher-cue {
-    transform: translateY(100%);
-    opacity: 0;
-    pointer-events: none;
+  .listen-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #1D4ED8; }
+  .listen-btn.listening {
+    background: #2563EB;
+    animation: listen-pulse 1s ease-in-out infinite;
   }
-  .teacher-cue-label {
+  @keyframes listen-pulse {
+    0%, 100% { box-shadow: 0 5px 0 #1D4ED8, 0 0 0 0 rgba(59, 130, 246, 0.45); }
+    50% { box-shadow: 0 5px 0 #1D4ED8, 0 0 0 12px rgba(59, 130, 246, 0); }
+  }
+  .listen-btn .material-symbols-rounded { font-size: 40px; }
+
+  /* ─── QUIZ (Reflect) ─── */
+  .slide--quiz {
+    background: #1C1917;
+    color: #fff;
+    justify-content: flex-start;
+    padding: 56px 32px 40px;
+  }
+  .quiz-wrap {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .quiz-progress {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+  .quiz-seg {
+    flex: 1;
+    height: 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    transition: background 0.25s ease;
+  }
+  .quiz-seg.is-done { background: #22C55E; }
+  .quiz-title {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--orange);
-    margin-bottom: 4px;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    text-align: left;
+    margin-bottom: 28px;
   }
-  .teacher-cue p {
-    font-size: 14px;
-    line-height: 1.45;
-    font-weight: 600;
-    color: rgba(255,255,255,0.88);
+  .quiz-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .teacher-cue em { color: var(--orange-light); font-style: normal; font-weight: 700; }
-
-  .notes-toggle {
-    position: fixed;
-    bottom: 16px;
-    right: 16px;
-    z-index: 200;
-    background: rgba(28,25,23,0.85);
+  .quiz-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border: 3px solid rgba(255, 255, 255, 0.22);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    border: 2px solid var(--orange);
-    border-radius: 12px;
-    padding: 8px 14px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 12px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.8vw, 1.55rem);
+    line-height: 1.35;
+    text-align: left;
     cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.2s, background 0.2s, transform 0.1s;
   }
-  .notes-toggle:active { transform: scale(0.96); }
+  .quiz-item:active { transform: scale(0.985); }
+  .quiz-item.is-done {
+    border-color: #22C55E;
+    background: rgba(34, 197, 94, 0.14);
+  }
+  .quiz-check {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .quiz-check .material-symbols-rounded {
+    font-size: 22px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .quiz-item.is-done .quiz-check {
+    border-color: #22C55E;
+    background: #22C55E;
+  }
+  .quiz-item.is-done .quiz-check .material-symbols-rounded {
+    opacity: 1;
+    transform: scale(1);
+  }
 
+  /* ─── NAV DOTS ─── */
   .nav-dots {
     position: fixed;
     right: 14px;
@@ -253,12 +331,20 @@
     gap: 6px;
   }
   .nav-dots a {
-    width: 8px; height: 8px;
+    display: block;
+    width: 14px;
+    height: 14px;
+    padding: 12px;
+    margin: -12px;
+    box-sizing: content-box;
     border-radius: 50%;
     background: var(--orange-light);
+    background-clip: content-box;
     border: 2px solid var(--orange);
     opacity: 0.35;
     text-decoration: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   .nav-dots a.active { opacity: 1; transform: scale(1.25); }
 
@@ -272,21 +358,29 @@
     text-decoration: none;
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
-    font-size: 12px;
-    padding: 8px 14px;
+    font-size: 14px;
+    min-height: 44px;
+    padding: 10px 18px;
+    display: inline-flex;
+    align-items: center;
     border-radius: 100px;
     box-shadow: 0 3px 0 var(--orange-dark);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   .app-link:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--orange-dark); }
 
   @media (max-width: 700px) {
-    .slide { padding: 32px 24px 90px; }
+    .slide { padding: 32px 24px; }
+    .slide--demo { padding: 16px 0 24px; }
+    .slide-demo-title { padding: 0 24px; margin-top: 40px; }
+    .slide--quiz { padding: 48px 20px 32px; }
+    .slide-demo-stage { min-height: 42vh; }
     .nav-dots { display: none; }
-    .teacher-cue p { font-size: 12px; }
   }
 
   @media print {
-    .teacher-cue, .notes-toggle, .nav-dots, .app-link { display: none; }
+    .nav-dots, .app-link, .slide-demo-controls, .slide-demo-stage { display: none; }
     .slide { min-height: auto; page-break-after: always; padding-bottom: 40px; }
     html { scroll-snap-type: none; }
   }
@@ -295,310 +389,220 @@
 <body>
 
 <a class="app-link" href="soundwave-studio.html?lesson=1" target="_blank" rel="noopener">Open SoundWave</a>
-<button type="button" class="notes-toggle" id="notesToggle" aria-pressed="false">Show teacher notes (N)</button>
 <nav class="nav-dots" id="navDots" aria-hidden="true"></nav>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!-- 1 · TITLE -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <section class="slide slide--orange" id="s1" data-phase="Start">
-  <span class="phase-tag">Lesson 1</span>
-  <span class="slide-index">1</span>
   <p class="board">What Does Sound Look Like?</p>
-  <p class="board-sub">Computing · Amazing Africa</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Welcome — today we find out how a computer can <em>see</em> sound. Don't explain yet. Scroll to the next slide when ready.</p>
-  </div>
-</section>
-
-<!-- ═══ HOOK ═══ -->
-<section class="slide slide--dark" id="s2" data-phase="Hook">
-  <span class="phase-tag">Hook · 5 mins</span>
-  <span class="slide-index">2</span>
-  <span class="material-symbols-rounded board-icon">visibility</span>
-  <p class="board board--wide">Watch the screen.</p>
-  <p class="board-sub">Say nothing — play your sound clip with the wave visible.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Do now</div>
-    <p>Play the audio clip (quiet → loud). Let pupils watch the wave grow. <em>Do not explain.</em> When it finishes, go to the next slide and ask the question.</p>
-  </div>
-</section>
-
-<section class="slide slide--dark" id="s3" data-phase="Hook">
-  <span class="phase-tag">Hook</span>
-  <span class="slide-index">3</span>
-  <p class="board board--wide">What did you notice about the picture when the sound got louder?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Look for</div>
-    <p>Pupils describe the wave getting bigger / spikier. Take 2–3 answers. Don't correct yet — just listen. Follow-up slide if needed.</p>
-  </div>
-</section>
-
-<section class="slide slide--dark" id="s4" data-phase="Hook">
-  <span class="phase-tag">Hook</span>
-  <span class="slide-index">4</span>
-  <p class="board board--wide">What do you think that picture is showing us?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Take a few ideas. Still don't give the full answer — you're building curiosity. Then: <em>"Let's find out."</em></p>
-  </div>
+  <p class="board-sub">Computing, Amazing Africa</p>
 </section>
 
 <!-- ═══ EXPLAIN ═══ -->
 <section class="slide slide--light" id="s5" data-phase="Explain">
-  <span class="phase-tag">Explain · 8 mins</span>
-  <span class="slide-index">5</span>
   <p class="board board--huge">Can a computer see sound?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Hands up — yes, no, not sure? Open SoundWave on the board (link top-right). You're going to show them the answer live.</p>
-  </div>
-</section>
-
-<section class="slide slide--dark" id="s6" data-phase="Explain">
-  <span class="phase-tag">Explain · Demo</span>
-  <span class="slide-index">6</span>
-  <span class="material-symbols-rounded board-icon board-icon--blue">hearing</span>
-  <p class="board board--wide">Watch the wave.</p>
-  <p class="board-sub">Tap the blue button · don't speak yet · then whisper · then talk · then stay quiet.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Do now</div>
-    <p>Demo on SoundWave — blue button only (Listen). Point when flat. Whisper, normal voice, silence. Ask after each: <em>"What changed?"</em> Nothing is saved.</p>
-  </div>
 </section>
 
 <section class="slide slide--white" id="s7" data-phase="Explain">
-  <span class="phase-tag">Explain · Vocabulary</span>
-  <span class="slide-index">7</span>
   <p class="vocab-word">microphone</p>
-  <p class="board-sub">It listens — and turns sound into <strong>data</strong> the computer can keep.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Point at the mic / iPad. <em>"The microphone hears you and the computer stores it as data — not on paper, inside the device."</em></p>
-  </div>
+  <p class="board-sub">It listens to your voice and sends it to the computer.</p>
 </section>
 
 <section class="slide slide--white" id="s8" data-phase="Explain">
-  <span class="phase-tag">Explain · Vocabulary</span>
-  <span class="slide-index">8</span>
+  <p class="vocab-word">data</p>
+  <p class="board-sub">Information the computer keeps about our sound.</p>
+</section>
+
+<section class="slide slide--white" id="s8b" data-phase="Explain">
   <p class="vocab-word">sound wave</p>
   <p class="board-sub">The line on the screen that shows us the sound.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Point at the orange line. <em>"This shape is a sound wave — it's the computer drawing the data so we can see it."</em></p>
-  </div>
 </section>
 
 <section class="slide slide--white" id="s9" data-phase="Explain">
-  <span class="phase-tag">Explain · Vocabulary</span>
-  <span class="slide-index">9</span>
   <p class="vocab-word">digital</p>
-  <p class="board-sub">Saved on a device — not on paper, not in the air.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p><em>"Digital means the sound is stored inside the computer or iPad as information."</em> Check: wave when you stop talking?</p>
-  </div>
+  <p class="board-sub">Saved on a device, not on paper, not in the air.</p>
 </section>
 
-<section class="slide slide--pale" id="s10" data-phase="Explain">
-  <span class="phase-tag">Explain · Check</span>
-  <span class="slide-index">10</span>
-  <p class="board board--wide">What happens to the wave when I stop talking?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Look for</div>
-    <p>It goes flat / still. Then ask: <em>"What would a really LOUD sound look like?"</em> (bigger peaks). Optional: has anyone seen this on a phone?</p>
+<section class="slide slide--white" id="s9b" data-phase="Explain">
+  <p class="vocab-word">volume</p>
+  <p class="board-sub">How loud or quiet a sound is.</p>
+</section>
+
+<section class="slide slide--white" id="s9c" data-phase="Explain">
+  <p class="vocab-word">record</p>
+  <p class="board-sub">When we capture our voice and save it on the device.</p>
+</section>
+
+<section class="slide slide--white" id="s9d" data-phase="Explain">
+  <p class="vocab-word">playback</p>
+  <p class="board-sub">When we listen to a saved recording again.</p>
+</section>
+
+<section class="slide slide--demo" id="s10" data-phase="Explain">
+  <p class="board board--wide slide-demo-title">What happens to the wave when I stop talking?</p>
+  <div class="slide-demo-stage" id="slideDemoStage">
+    <canvas id="slideDemoCanvas" aria-hidden="true"></canvas>
+  </div>
+  <div class="slide-demo-controls">
+    <button type="button" class="listen-btn" id="slideDemoListen" aria-label="Tap the blue button to listen to your voice on the wave">
+      <span class="material-symbols-rounded" aria-hidden="true">hearing</span>
+    </button>
   </div>
 </section>
 
 <!-- ═══ EXPLORE ═══ -->
 <section class="slide slide--devices-on" id="s11" data-phase="Explore">
-  <span class="phase-tag">Explore · 10 mins</span>
-  <span class="slide-index">11</span>
   <p class="device-banner">
     <span class="material-symbols-rounded">headphones</span>
     Devices on
   </p>
-  <p class="board-sub" style="color:rgba(255,255,255,0.85);margin-top:16px;">Headphones on · Open SoundWave on your iPad</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Give the pupil link / check bookmarks. TA circulates for mic permission. <em>Blue button only — they are exploring, not saving yet.</em></p>
-  </div>
 </section>
 
 <section class="slide slide--light" id="s12" data-phase="Explore">
-  <span class="phase-tag">Explore · Step 1</span>
-  <span class="slide-index">12</span>
   <p class="step-num">1</p>
   <span class="material-symbols-rounded board-icon board-icon--blue">hearing</span>
   <p class="board board--wide">Tap the blue button.</p>
   <p class="board-sub">Watch your wave move.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Look for</div>
-    <p>Everyone gets a moving wave. If not — mic blocked, ask a grown-up. Don't rush to record.</p>
-  </div>
 </section>
 
 <section class="slide slide--light" id="s13" data-phase="Explore">
-  <span class="phase-tag">Explore · Step 2</span>
-  <span class="slide-index">13</span>
   <p class="step-num">2</p>
   <p class="board board--wide">Whisper a word.</p>
   <p class="board-sub">Then say the same word louder. Compare the wave.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Look for</div>
-    <p>Pupils notice quiet = smaller wave, loud = bigger. Pair talk if ready.</p>
-  </div>
 </section>
 
 <section class="slide slide--light" id="s14" data-phase="Explore">
-  <span class="phase-tag">Explore · Step 3</span>
-  <span class="slide-index">14</span>
   <p class="step-num">3</p>
   <p class="board board--wide">Stay silent.</p>
   <p class="board-sub">Watch the wave go flat.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Tap blue again to stop when finished exploring. Next slide — bring the class back.</p>
-  </div>
 </section>
 
 <section class="slide slide--pale" id="s15" data-phase="Explore">
-  <span class="phase-tag">Explore · Talk</span>
-  <span class="slide-index">15</span>
   <p class="talk-stem">The wave goes<span class="blank"></span><br>when I<span class="blank"></span></p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Stop the class. 2–3 pairs share: <em>"What did you find out?"</em> Model the stem: "The wave goes <em>up</em> when I <em>shout</em>." Leave this slide up during pair talk.</p>
-  </div>
 </section>
 
 <!-- ═══ RECORD ═══ -->
 <section class="slide slide--devices-on" id="s16" data-phase="Record">
-  <span class="phase-tag">Record · 12 mins</span>
-  <span class="slide-index">16</span>
   <p class="device-banner">
     <span class="material-symbols-rounded">radio_button_checked</span>
     Time to record
   </p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Do now</div>
-    <p>Switch SoundWave to the board. Model on the next slides before pupils record. Red button this time — they will save.</p>
-  </div>
 </section>
 
 <section class="slide slide--white" id="s17" data-phase="Record">
-  <span class="phase-tag">Record · Model</span>
-  <span class="slide-index">17</span>
-  <p class="board-sub" style="margin-bottom:16px;">Say this clearly:</p>
+  <p class="board-sub board-sub--label">Say this clearly:</p>
   <p class="model-phrase">"The lion roars across the savannah."</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Do now</div>
-    <p>Red button → say the phrase → stop → <em>Yes, save it!</em> → show My Recordings → Play. Point at the saved wave.</p>
-  </div>
 </section>
 
 <section class="slide slide--light" id="s18" data-phase="Record">
-  <span class="phase-tag">Record · Steps</span>
-  <span class="slide-index">18</span>
   <p class="step-num">1</p>
   <span class="material-symbols-rounded board-icon board-icon--red">radio_button_checked</span>
-  <p class="board board--wide">Red button · speak · stop</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Then</div>
-    <p>Next slide for save &amp; play steps.</p>
-  </div>
+  <p class="board board--wide">Red button, speak, stop</p>
 </section>
 
 <section class="slide slide--light" id="s19" data-phase="Record">
-  <span class="phase-tag">Record · Steps</span>
-  <span class="slide-index">19</span>
   <p class="step-num">2</p>
   <span class="material-symbols-rounded board-icon">save</span>
   <p class="board board--wide">Yes, save it!</p>
   <p class="board-sub">Look at your wave in My Recordings.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Look for</div>
-    <p>Pupils tap save — not "redo" unless they're unhappy. Wave should match where they spoke.</p>
-  </div>
 </section>
 
 <section class="slide slide--light" id="s20" data-phase="Record">
-  <span class="phase-tag">Record · Steps</span>
-  <span class="slide-index">20</span>
   <p class="step-num">3</p>
   <span class="material-symbols-rounded board-icon">play_arrow</span>
   <p class="board board--wide">Press Play.</p>
   <p class="board-sub">Does it sound clear?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Your turn · pupil task</div>
-    <p><em>"One short phrase — your name, a favourite animal, or something from our Africa topic."</em> Circulate. Optional: record again and compare two waves.</p>
-  </div>
 </section>
 
 <section class="slide slide--pale" id="s21" data-phase="Record">
-  <span class="phase-tag">Record · While circulating</span>
-  <span class="slide-index">21</span>
-  <p class="board board--wide" style="font-size:clamp(1.5rem,4vw,2.5rem);max-width:24ch;">Can you point to where you spoke loudly on the wave?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Also ask</div>
-    <p><em>"Does your wave look like your partner's? Why might it be different?"</em> · <em>"Which recording is clearer?"</em></p>
-  </div>
+  <p class="board board--wide">Can you point to where you spoke loudly on the wave?</p>
 </section>
 
 <!-- ═══ REFLECT ═══ -->
 <section class="slide slide--devices-off" id="s22" data-phase="Reflect">
-  <span class="phase-tag">Reflect · 8 mins</span>
-  <span class="slide-index">22</span>
   <p class="device-banner">
     <span class="material-symbols-rounded">devices</span>
     Devices down
   </p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Do now</div>
-    <p>Headphones off. Ask 2–3 pairs to share on the board — play their clip, point at the wave together.</p>
-  </div>
 </section>
 
-<section class="slide slide--dark" id="s23" data-phase="Reflect">
-  <span class="phase-tag">Reflect</span>
-  <span class="slide-index">23</span>
-  <p class="board board--wide">Can a computer see sound?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Establish</div>
-    <p>Yes — it turns sound into data and draws a wave. The wave tells us about the sound <em>before</em> we press play. Point at features: where they started, quiet gaps.</p>
-  </div>
-</section>
-
-<section class="slide slide--dark" id="s24" data-phase="Reflect">
-  <span class="phase-tag">Reflect · Exit</span>
-  <span class="slide-index">24</span>
-  <p class="board board--wide">Loud clap or quiet whisper — which wave has bigger peaks?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Show of hands</div>
-    <p>Loud = bigger peaks. Then next slide for <em>digital</em>.</p>
-  </div>
-</section>
-
-<section class="slide slide--dark" id="s25" data-phase="Reflect">
-  <span class="phase-tag">Reflect · Exit</span>
-  <span class="slide-index">25</span>
-  <p class="board board--wide">What does digital mean?</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">Look for</div>
-    <p>Stored on a device / as data on a computer. Praise use of vocabulary from today.</p>
+<section class="slide slide--quiz" id="s23" data-phase="Reflect">
+  <div class="quiz-wrap">
+    <div class="quiz-progress" id="quizProgress" aria-hidden="true">
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+      <span class="quiz-seg"></span>
+    </div>
+    <h2 class="quiz-title">Quick quiz</h2>
+    <ul class="quiz-list" id="quizList">
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">Can a computer see sound?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What does a microphone do?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What is data?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What is a sound wave?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What does digital mean?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What is volume?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What does record mean?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">What is playback?</span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="quiz-item" aria-pressed="false">
+          <span class="quiz-check"><span class="material-symbols-rounded" aria-hidden="true">check</span></span>
+          <span class="quiz-q">Loud clap or quiet whisper. Which wave has bigger peaks?</span>
+        </button>
+      </li>
+    </ul>
   </div>
 </section>
 
 <section class="slide slide--orange" id="s26" data-phase="Next">
-  <span class="phase-tag">Next lesson</span>
-  <span class="slide-index">26</span>
   <p class="board board--wide">Next time:</p>
-  <p class="board-sub">Five parts of a poem — and put them in order.</p>
-  <div class="teacher-cue">
-    <div class="teacher-cue-label">You say</div>
-    <p>Quick teaser only. Well done today — we saw that sound has a shape on a screen. Dismiss when ready.</p>
-  </div>
+  <p class="board-sub">Five parts of a poem, and put them in order.</p>
 </section>
 
 <script>
@@ -607,7 +611,6 @@
 
   const slides = [...document.querySelectorAll('.slide')];
   const nav = document.getElementById('navDots');
-  const notesToggle = document.getElementById('notesToggle');
 
   // Build nav dots
   slides.forEach((s, i) => {
@@ -618,12 +621,14 @@
     nav.appendChild(a);
   });
   const dots = [...nav.querySelectorAll('a')];
+  let currentIndex = 0;
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
           const i = slides.indexOf(e.target);
+          if (i >= 0) currentIndex = i;
           dots.forEach((d, j) => d.classList.toggle('active', j === i));
         }
       });
@@ -633,36 +638,199 @@
   slides.forEach((s) => observer.observe(s));
 
   function goTo(i) {
-    if (i >= 0 && i < slides.length) slides[i].scrollIntoView({ behavior: 'smooth' });
+    if (i >= 0 && i < slides.length) {
+      currentIndex = i;
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
+  const NEXT_KEYS = ['ArrowDown', 'PageDown', ' ', 'ArrowRight', 'Enter'];
+  const PREV_KEYS = ['ArrowUp', 'PageUp', 'ArrowLeft', 'Backspace'];
+
   document.addEventListener('keydown', (e) => {
-    const cur = dots.findIndex((d) => d.classList.contains('active'));
-    if (e.key === 'n' || e.key === 'N') {
-      document.body.classList.toggle('notes-hidden');
-      const hidden = document.body.classList.contains('notes-hidden');
-      notesToggle.textContent = hidden ? 'Show teacher notes (N)' : 'Hide teacher notes (N)';
-      notesToggle.setAttribute('aria-pressed', hidden ? 'false' : 'true');
-      return;
-    }
-    if (['ArrowDown', 'PageDown', ' ', 'ArrowRight'].includes(e.key)) {
+    if (NEXT_KEYS.includes(e.key)) {
       e.preventDefault();
-      goTo(cur + 1);
+      goTo(currentIndex + 1);
     }
-    if (['ArrowUp', 'PageUp', 'ArrowLeft'].includes(e.key)) {
+    if (PREV_KEYS.includes(e.key)) {
       e.preventDefault();
-      goTo(cur - 1);
+      goTo(currentIndex - 1);
     }
   });
+})();
 
-  notesToggle.addEventListener('click', () => {
-    document.body.classList.toggle('notes-hidden');
-    const hidden = document.body.classList.contains('notes-hidden');
-    notesToggle.textContent = hidden ? 'Show teacher notes (N)' : 'Hide teacher notes (N)';
-    notesToggle.setAttribute('aria-pressed', hidden ? 'false' : 'true');
+(function initQuiz() {
+  'use strict';
+
+  const list = document.getElementById('quizList');
+  const progress = document.getElementById('quizProgress');
+  if (!list || !progress) return;
+
+  const items = [...list.querySelectorAll('.quiz-item')];
+  const segments = [...progress.querySelectorAll('.quiz-seg')];
+
+  function updateProgress() {
+    const done = items.filter((item) => item.classList.contains('is-done')).length;
+    segments.forEach((seg, i) => seg.classList.toggle('is-done', i < done));
+  }
+
+  items.forEach((item) => {
+    item.addEventListener('click', () => {
+      const done = item.classList.toggle('is-done');
+      item.setAttribute('aria-pressed', done ? 'true' : 'false');
+      updateProgress();
+    });
+  });
+})();
+
+(function initSlideDemo() {
+  'use strict';
+
+  const slide = document.getElementById('s10');
+  const stage = document.getElementById('slideDemoStage');
+  const canvas = document.getElementById('slideDemoCanvas');
+  const btn = document.getElementById('slideDemoListen');
+  if (!slide || !stage || !canvas || !btn) return;
+
+  const ctx = canvas.getContext('2d');
+  let audioCtx = null;
+  let stream = null;
+  let animFrame = null;
+  let listening = false;
+
+  function resizeCanvas() {
+    const w = stage.clientWidth;
+    const h = stage.clientHeight;
+    if (w < 1 || h < 1) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+  }
+
+  function clearWave() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function stopListening() {
+    if (!listening) return;
+    listening = false;
+    cancelAnimationFrame(animFrame);
+    animFrame = null;
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+      stream = null;
+    }
+    btn.classList.remove('listening');
+    clearWave();
+  }
+
+  function drawLiveWave(analyser) {
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.6;
+    const bufLen = analyser.fftSize;
+    const dataArr = new Uint8Array(bufLen);
+    const displayBuf = new Float32Array(bufLen).fill(128);
+    const DECAY = 0.55;
+    const SENSITIVITY = 0.85;
+    const dpr = window.devicePixelRatio || 1;
+
+    function draw() {
+      if (!listening) return;
+      animFrame = requestAnimationFrame(draw);
+      analyser.getByteTimeDomainData(dataArr);
+
+      for (let i = 0; i < bufLen; i++) {
+        const scaled = 128 + (dataArr[i] - 128) * SENSITIVITY;
+        displayBuf[i] = displayBuf[i] * DECAY + scaled * (1 - DECAY);
+      }
+
+      const smoothed = new Float32Array(bufLen);
+      for (let i = 0; i < bufLen; i++) {
+        smoothed[i] =
+          (displayBuf[Math.max(0, i - 1)] + displayBuf[i] + displayBuf[Math.min(bufLen - 1, i + 1)]) / 3;
+      }
+
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.lineWidth = 3 * dpr;
+      ctx.strokeStyle = '#F97316';
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+
+      const sliceW = W / bufLen;
+      ctx.beginPath();
+      let x = 0;
+      for (let i = 0; i < bufLen; i++) {
+        const y = ((smoothed[i] / 128.0) * H) / 2;
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          const prevX = (i - 1) * sliceW;
+          const prevY = ((smoothed[i - 1] / 128.0) * H) / 2;
+          const cpX = (prevX + x) / 2;
+          ctx.bezierCurveTo(cpX, prevY, cpX, y, x, y);
+        }
+        x += sliceW;
+      }
+      ctx.stroke();
+    }
+    draw();
+  }
+
+  async function startListening() {
+    if (listening) return;
+    if (!navigator.mediaDevices?.getUserMedia) return;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const source = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      source.connect(analyser);
+
+      listening = true;
+      btn.classList.add('listening');
+      resizeCanvas();
+      drawLiveWave(analyser);
+    } catch (err) {
+      console.error(err);
+      stopListening();
+    }
+  }
+
+  btn.addEventListener('click', () => {
+    if (listening) stopListening();
+    else startListening();
   });
 
-  // Start with notes visible for teacher prep; press N before class to hide from pupils
+  window.addEventListener('resize', () => {
+    if (slide.getBoundingClientRect().width > 0) resizeCanvas();
+  });
+
+  const demoObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) {
+          stopListening();
+        } else {
+          resizeCanvas();
+        }
+      });
+    },
+    { threshold: 0.25 }
+  );
+  demoObserver.observe(slide);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopListening();
+  });
+
+  resizeCanvas();
 })();
 </script>
 </body>
