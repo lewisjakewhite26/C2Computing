@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>SoundWave Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0&display=swap" rel="stylesheet">
@@ -293,6 +296,101 @@
   html.stage-fs-active .main { visibility: hidden; }
   .stage-area:fullscreen .stage,
   .stage-area.fs-fallback .stage { flex: 1; min-height: 0; }
+
+  /* KIOSK MODE (lesson links — full screen, teacher PIN to exit) */
+  html.kiosk-mode {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  html.kiosk-mode body {
+    height: 100%;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  html.kiosk-mode .stage-fs-btn { display: none !important; }
+
+  .kiosk-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px;
+  }
+  .kiosk-splash-inner {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    color: var(--text);
+  }
+  .kiosk-splash-inner .material-symbols-rounded {
+    font-size: 72px;
+    color: var(--blue);
+    display: block;
+    margin-bottom: 20px;
+  }
+  .kiosk-splash-inner p {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    line-height: 1.35;
+  }
+
+  .teacher-pin-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    background: rgba(28, 25, 23, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .teacher-pin-box {
+    background: var(--panel);
+    border-radius: var(--radius-xl);
+    padding: 28px 32px;
+    width: min(320px, 100%);
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .teacher-pin-box p {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .teacher-pin-input {
+    width: 100%;
+    border: 3px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: 0.35em;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .teacher-pin-input:focus {
+    outline: none;
+    border-color: var(--orange);
+  }
+  .teacher-pin-cancel {
+    border: none;
+    background: transparent;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 8px;
+  }
 
   /* RECORD BUTTON BAR */
   .record-bar {
@@ -651,6 +749,21 @@
   </div>
 </div>
 
+<div class="kiosk-splash hidden" id="kioskSplash">
+  <div class="kiosk-splash-inner">
+    <span class="material-symbols-rounded" aria-hidden="true">hearing</span>
+    <p>Tap anywhere to start</p>
+  </div>
+</div>
+
+<div class="teacher-pin-overlay hidden" id="teacherPinOverlay" role="dialog" aria-modal="true" aria-labelledby="teacherPinTitle">
+  <div class="teacher-pin-box">
+    <p id="teacherPinTitle">Teacher code</p>
+    <input class="teacher-pin-input" id="teacherPinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Teacher exit code">
+    <button type="button" class="teacher-pin-cancel" id="teacherPinCancel">Cancel</button>
+  </div>
+</div>
+
 <!-- CHILD-FRIENDLY MESSAGES (errors, mic help) -->
 <div class="modal-overlay hidden" id="kidOverlay" role="dialog" aria-modal="true" aria-labelledby="kidTitle">
   <div class="modal">
@@ -760,6 +873,10 @@
     timelineEmpty: document.getElementById('timelineEmpty'),
     timelinePlayBtn: document.getElementById('timelinePlayBtn'),
     lessonBadge: document.getElementById('lessonBadge'),
+    kioskSplash: document.getElementById('kioskSplash'),
+    teacherPinOverlay: document.getElementById('teacherPinOverlay'),
+    teacherPinInput: document.getElementById('teacherPinInput'),
+    teacherPinCancel: document.getElementById('teacherPinCancel'),
     kidOverlay: document.getElementById('kidOverlay'),
     kidIcon: document.getElementById('kidIcon'),
     kidTitle: document.getElementById('kidTitle'),
@@ -1247,8 +1364,133 @@
     }
   }
 
-  // ─── Fullscreen (stage area — wave fills screen, controls stay visible) ───
-  const Fullscreen = {
+  // ─── Kiosk (lesson links — locked full screen, PIN 1111 to exit) ─────────
+  const KIOSK_PIN = '1111';
+
+  const Kiosk = {
+    locked: false,
+    pinBuffer: '',
+    exitAuthorized: false,
+    logoPressTimer: null,
+
+    async requestNativeFullscreen() {
+      try {
+        const el = document.documentElement;
+        if (el.requestFullscreen) {
+          await el.requestFullscreen({ navigationUI: 'hide' });
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        }
+      } catch {
+        /* CSS kiosk lock still applies */
+      }
+    },
+
+    async enter() {
+      this.locked = true;
+      this.exitAuthorized = false;
+      this.pinBuffer = '';
+      document.documentElement.classList.add('kiosk-mode');
+      await this.requestNativeFullscreen();
+      AudioEngine.resizeCanvas();
+    },
+
+    async exit() {
+      this.exitAuthorized = true;
+      this.locked = false;
+      this.pinBuffer = '';
+      document.documentElement.classList.remove('kiosk-mode');
+      dom.teacherPinOverlay.classList.add('hidden');
+      dom.teacherPinInput.value = '';
+      try {
+        if (document.fullscreenElement) {
+          if (document.exitFullscreen) await document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+      } catch {
+        /* ignore */
+      }
+      AudioEngine.resizeCanvas();
+    },
+
+    tryPinDigit(digit) {
+      if (!this.locked) return;
+      this.pinBuffer = (this.pinBuffer + digit).slice(-KIOSK_PIN.length);
+      if (this.pinBuffer === KIOSK_PIN) {
+        this.pinBuffer = '';
+        this.exit();
+      }
+    },
+
+    showSplash() {
+      dom.kioskSplash.classList.remove('hidden');
+      dom.kioskSplash.addEventListener(
+        'click',
+        () => {
+          dom.kioskSplash.classList.add('hidden');
+          this.enter();
+        },
+        { once: true }
+      );
+    },
+
+    showTeacherPin() {
+      dom.teacherPinOverlay.classList.remove('hidden');
+      dom.teacherPinInput.value = '';
+      dom.teacherPinInput.focus();
+    },
+
+    bindTeacherExit() {
+      const logo = document.querySelector('.app-logo');
+      logo.addEventListener('pointerdown', () => {
+        this.logoPressTimer = setTimeout(() => this.showTeacherPin(), 1200);
+      });
+      logo.addEventListener('pointerup', () => clearTimeout(this.logoPressTimer));
+      logo.addEventListener('pointerleave', () => clearTimeout(this.logoPressTimer));
+      logo.addEventListener('pointercancel', () => clearTimeout(this.logoPressTimer));
+
+      dom.teacherPinInput.addEventListener('input', () => {
+        const v = dom.teacherPinInput.value.replace(/\D/g, '').slice(0, KIOSK_PIN.length);
+        dom.teacherPinInput.value = v;
+        if (v === KIOSK_PIN) this.exit();
+      });
+
+      dom.teacherPinCancel.addEventListener('click', () => {
+        dom.teacherPinOverlay.classList.add('hidden');
+        dom.teacherPinInput.value = '';
+      });
+    },
+
+    bindPinKeyboard() {
+      document.addEventListener('keydown', (e) => {
+        if (!this.locked) return;
+        if (e.key >= '0' && e.key <= '9') this.tryPinDigit(e.key);
+      });
+    },
+
+    bindFullscreenGuard() {
+      const relock = () => {
+        if (this.locked && !this.exitAuthorized) this.requestNativeFullscreen();
+      };
+      document.addEventListener('fullscreenchange', relock);
+      document.addEventListener('webkitfullscreenchange', relock);
+      document.addEventListener('visibilitychange', () => {
+        if (this.locked && document.visibilityState === 'visible') relock();
+      });
+    },
+
+    init() {
+      if (!dom.kioskSplash || !dom.teacherPinOverlay) return;
+      dom.fullscreenBtn.classList.add('hidden');
+      this.bindTeacherExit();
+      this.bindPinKeyboard();
+      this.bindFullscreenGuard();
+      this.showSplash();
+    },
+  };
+
+  // ─── Stage fullscreen (full studio only — Bigger button) ─────────────────
+  const StageFullscreen = {
     isActive() {
       return (
         document.fullscreenElement === dom.stageArea ||
@@ -1899,7 +2141,11 @@
     dom.timelinePlayBtn.addEventListener('click', () => Playback.playTimeline());
     window.addEventListener('resize', () => AudioEngine.resizeCanvas());
 
-    Fullscreen.init();
+    if (LESSON.number >= 1) {
+      Kiosk.init();
+    } else {
+      StageFullscreen.init();
+    }
     AudioEngine.resizeCanvas();
     applyLessonMode();
   }
