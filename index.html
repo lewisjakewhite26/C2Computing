@@ -117,6 +117,32 @@
   }
   .slide--dark .vocab-word { color: var(--orange); }
 
+  .vocab-card {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    text-align: center;
+    font: inherit;
+    color: inherit;
+  }
+  .vocab-card .vocab-word { margin-bottom: 0; }
+  .vocab-def {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin: 0 auto;
+    transition: max-height 0.45s ease, opacity 0.35s ease, margin-top 0.35s ease;
+  }
+  .vocab-card.is-revealed .vocab-def {
+    max-height: 6em;
+    opacity: 1;
+    margin-top: 28px;
+  }
+
   .talk-stem {
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
@@ -319,21 +345,101 @@
     transform: scale(1);
   }
 
-  /* ─── DECK CHROME (progress + fullscreen) ─── */
-  .deck-progress {
+  /* ─── DECK CHROME (glass rail + fullscreen) ─── */
+  .deck-rail {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    z-index: 300;
-    background: rgba(28, 25, 23, 0.1);
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+    width: 52px;
+    height: min(460px, 58vh);
+    padding: 14px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.05) 48%,
+      rgba(255, 255, 255, 0.08) 100%
+    );
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 10px 40px rgba(28, 25, 23, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
   }
-  .deck-progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #EA580C, #F97316);
-    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  .deck-rail-num {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(28, 25, 23, 0.3);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .deck-rail-num--cur {
+    font-size: 14px;
+    color: #EA580C;
+    text-shadow: 0 1px 8px rgba(249, 115, 22, 0.35);
+  }
+  .deck-rail-track {
+    position: relative;
+    flex: 1;
+    width: 44px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .deck-rail-track::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: rgba(28, 25, 23, 0.06);
+  }
+  .deck-rail-fill {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    height: 0%;
+    background: linear-gradient(180deg, #FB923C, #F97316);
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.45);
+    transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  .deck-rail-thumb {
+    position: absolute;
+    left: 50%;
+    top: 0%;
+    width: 14px;
+    height: 14px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: linear-gradient(145deg, #FFF7ED 0%, #FED7AA 35%, #F97316 100%);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+      0 0 0 4px rgba(249, 115, 22, 0.18),
+      0 4px 14px rgba(249, 115, 22, 0.45);
+    transition: top 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
   }
   .deck-tools {
     position: fixed;
@@ -347,38 +453,23 @@
   .deck-fs-btn {
     width: 44px;
     height: 44px;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 100px;
-    background: rgba(28, 25, 23, 0.82);
-    color: #fff;
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08));
+    color: rgba(28, 25, 23, 0.82);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 12px rgba(28, 25, 23, 0.18);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 6px 24px rgba(28, 25, 23, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.45);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.1s, background 0.15s;
   }
   .deck-fs-btn:active { transform: scale(0.94); }
   .deck-fs-btn .material-symbols-rounded { font-size: 22px; }
-  .deck-count {
-    position: fixed;
-    bottom: 22px;
-    left: 24px;
-    z-index: 200;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    padding: 9px 16px;
-    border-radius: 100px;
-    background: rgba(28, 25, 23, 0.78);
-    color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(10px);
-    pointer-events: none;
-  }
 
   .app-link {
     position: static;
@@ -405,13 +496,18 @@
     .slide-demo-title { padding: 0 24px; margin-top: 40px; }
     .slide--quiz { padding: 48px 20px 32px; }
     .slide-demo-stage { min-height: 42vh; }
-    .deck-count { bottom: 16px; left: 16px; font-size: 12px; }
+    .deck-rail {
+      right: 10px;
+      width: 44px;
+      height: min(360px, 50vh);
+      padding: 12px 0;
+    }
     .deck-tools { top: 12px; right: 12px; }
     .app-link { font-size: 12px; padding: 10px 14px; }
   }
 
   @media print {
-    .deck-progress, .deck-tools, .deck-count, .app-link, .slide-demo-controls, .slide-demo-stage { display: none; }
+    .deck-rail, .deck-tools, .app-link, .slide-demo-controls, .slide-demo-stage { display: none; }
     .slide { min-height: auto; page-break-after: always; padding-bottom: 40px; }
     html { scroll-snap-type: none; }
   }
@@ -419,14 +515,20 @@
 </head>
 <body>
 
-<div class="deck-progress" aria-hidden="true"><div class="deck-progress-fill" id="deckProgressFill"></div></div>
+<aside class="deck-rail" id="deckRail" aria-label="Slide navigation" aria-valuemin="1" aria-valuemax="1" aria-valuenow="1">
+  <span class="deck-rail-num deck-rail-num--cur" id="deckRailCur">1</span>
+  <button type="button" class="deck-rail-track" id="deckRailTrack" aria-label="Jump to slide">
+    <span class="deck-rail-fill" id="deckRailFill"></span>
+    <span class="deck-rail-thumb" id="deckRailThumb"></span>
+  </button>
+  <span class="deck-rail-num deck-rail-num--total" id="deckRailTotal">1</span>
+</aside>
 <div class="deck-tools">
   <button type="button" class="deck-fs-btn" id="deckFsBtn" aria-label="Full screen">
     <span class="material-symbols-rounded" id="deckFsIcon" aria-hidden="true">fullscreen</span>
   </button>
   <a class="app-link" href="soundwave-studio.html?lesson=1" target="_blank" rel="noopener">Open SoundWave</a>
 </div>
-<span class="deck-count" id="deckCount" aria-live="polite">1 / 1</span>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!-- 1 · TITLE -->
@@ -441,39 +543,53 @@
   <p class="board board--huge">Can a computer see sound?</p>
 </section>
 
-<section class="slide slide--white" id="s7" data-phase="Explain">
-  <p class="vocab-word">microphone</p>
-  <p class="board-sub">It listens to your voice and sends it to the computer.</p>
+<section class="slide slide--white slide--vocab" id="s7" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">microphone</p>
+    <p class="board-sub vocab-def">It listens to your voice and sends it to the computer.</p>
+  </button>
 </section>
 
-<section class="slide slide--white" id="s8" data-phase="Explain">
-  <p class="vocab-word">data</p>
-  <p class="board-sub">Information the computer keeps about our sound.</p>
+<section class="slide slide--white slide--vocab" id="s8" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">data</p>
+    <p class="board-sub vocab-def">Information the computer keeps about our sound.</p>
+  </button>
 </section>
 
-<section class="slide slide--white" id="s8b" data-phase="Explain">
-  <p class="vocab-word">sound wave</p>
-  <p class="board-sub">The line on the screen that shows us the sound.</p>
+<section class="slide slide--white slide--vocab" id="s8b" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">sound wave</p>
+    <p class="board-sub vocab-def">The line on the screen that shows us the sound.</p>
+  </button>
 </section>
 
-<section class="slide slide--white" id="s9" data-phase="Explain">
-  <p class="vocab-word">digital</p>
-  <p class="board-sub">Saved on a device, not on paper, not in the air.</p>
+<section class="slide slide--white slide--vocab" id="s9" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">digital</p>
+    <p class="board-sub vocab-def">The sound is kept on a computer or iPad as information, not on paper.</p>
+  </button>
 </section>
 
-<section class="slide slide--white" id="s9b" data-phase="Explain">
-  <p class="vocab-word">volume</p>
-  <p class="board-sub">How loud or quiet a sound is.</p>
+<section class="slide slide--white slide--vocab" id="s9b" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">volume</p>
+    <p class="board-sub vocab-def">How loud or quiet a sound is.</p>
+  </button>
 </section>
 
-<section class="slide slide--white" id="s9c" data-phase="Explain">
-  <p class="vocab-word">record</p>
-  <p class="board-sub">When we capture our voice and save it on the device.</p>
+<section class="slide slide--white slide--vocab" id="s9c" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">record</p>
+    <p class="board-sub vocab-def">When we capture our voice and save it on the device.</p>
+  </button>
 </section>
 
-<section class="slide slide--white" id="s9d" data-phase="Explain">
-  <p class="vocab-word">playback</p>
-  <p class="board-sub">When we listen to a saved recording again.</p>
+<section class="slide slide--white slide--vocab" id="s9d" data-phase="Explain">
+  <button type="button" class="vocab-card" aria-expanded="false">
+    <p class="vocab-word">playback</p>
+    <p class="board-sub vocab-def">When we listen to a saved recording again.</p>
+  </button>
 </section>
 
 <section class="slide slide--demo" id="s10" data-phase="Explain">
@@ -639,7 +755,7 @@
 
 <section class="slide slide--orange" id="s26" data-phase="Next">
   <p class="board board--wide">Next time:</p>
-  <p class="board-sub">Five parts of a poem, and put them in order.</p>
+  <p class="board-sub">We will build our own recording of a short poem about an African animal.</p>
 </section>
 
 <script>
@@ -647,17 +763,49 @@
   'use strict';
 
   const slides = [...document.querySelectorAll('.slide')];
-  const progressFill = document.getElementById('deckProgressFill');
-  const deckCount = document.getElementById('deckCount');
+  const rail = document.getElementById('deckRail');
+  const railTrack = document.getElementById('deckRailTrack');
+  const railFill = document.getElementById('deckRailFill');
+  const railThumb = document.getElementById('deckRailThumb');
+  const railCur = document.getElementById('deckRailCur');
+  const railTotal = document.getElementById('deckRailTotal');
   const fsBtn = document.getElementById('deckFsBtn');
   const fsIcon = document.getElementById('deckFsIcon');
   let currentIndex = 0;
 
-  function updateDeckUI(index) {
-    const pct = ((index + 1) / slides.length) * 100;
-    progressFill.style.width = pct + '%';
-    deckCount.textContent = (index + 1) + ' / ' + slides.length;
+  function slideProgress(index) {
+    if (slides.length <= 1) return 0;
+    return (index / (slides.length - 1)) * 100;
   }
+
+  function updateDeckUI(index) {
+    const pct = slideProgress(index);
+    railThumb.style.top = pct + '%';
+    railFill.style.height = pct + '%';
+    railCur.textContent = index + 1;
+    railTotal.textContent = slides.length;
+    rail.setAttribute('aria-valuenow', index + 1);
+    rail.setAttribute('aria-valuemax', slides.length);
+  }
+
+  function jumpFromTrack(clientY) {
+    const rect = railTrack.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+    const i = slides.length <= 1 ? 0 : Math.round(ratio * (slides.length - 1));
+    goTo(i);
+  }
+
+  railTrack.addEventListener('click', (e) => jumpFromTrack(e.clientY));
+  railTrack.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      e.preventDefault();
+      goTo(currentIndex + 1);
+    }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault();
+      goTo(currentIndex - 1);
+    }
+  });
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -739,6 +887,38 @@
   document.addEventListener('fullscreenchange', updateFsBtn);
   document.addEventListener('webkitfullscreenchange', updateFsBtn);
   updateFsBtn();
+})();
+
+(function initVocabCards() {
+  'use strict';
+
+  const cards = [...document.querySelectorAll('.vocab-card')];
+  if (!cards.length) return;
+
+  function resetCard(card) {
+    card.classList.remove('is-revealed');
+    card.setAttribute('aria-expanded', 'false');
+  }
+
+  cards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const revealed = card.classList.toggle('is-revealed');
+      card.setAttribute('aria-expanded', revealed ? 'true' : 'false');
+    });
+
+    const slide = card.closest('.slide');
+    if (!slide) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) resetCard(card);
+        });
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(slide);
+  });
 })();
 
 (function initQuiz() {
