@@ -42,6 +42,6 @@ Repo: https://github.com/lewisjakewhite26/C2Computing
 
 ## SoundWave controls
 
-- **Blue ear** — Listen only (live wave, nothing saved)
+- **Blue ear button** — Listen only (live wave, nothing saved)
 - **Red button** — Record (max 45 seconds)
 - **Bigger** — Fullscreen wave area
