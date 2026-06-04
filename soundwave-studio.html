@@ -665,7 +665,7 @@
   /* PLAYING STATE */
   .timeline-clip.playing { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
 
-  /* LESSON MODES — ?lesson=1 hides timeline (Lessons 2–6 use sequencing) */
+  /* LESSON MODES — ?lesson=1 … ?lesson=6 (timeline enabled for all) */
   .timeline-wrap.lesson-hidden { display: none !important; }
   .lesson-badge {
     font-family: 'Nunito', sans-serif;
@@ -736,7 +736,7 @@
       <div class="record-timer hidden" id="recordTimer">0:00</div>
     </div>
 
-    <!-- TIMELINE (hidden on ?lesson=1) -->
+    <!-- TIMELINE -->
     <div class="timeline-wrap" id="timelineWrap">
       <button type="button" class="timeline-play-btn" id="timelinePlayBtn" aria-label="Play all recordings in order">
         <span class="material-symbols-rounded icon-timeline-play" id="timelinePlayIcon" aria-hidden="true">play_arrow</span>
@@ -802,6 +802,7 @@
   };
 
   const TIMELINE_HINTS = {
+    1: 'Drag your recordings here to build your sequence →',
     2: 'Drag your poem parts here — put them in order →',
     3: 'Drag recordings here to build your sequence →',
     4: 'Drag recordings here to build your sequence →',
@@ -813,7 +814,7 @@
     const raw = new URLSearchParams(location.search).get('lesson');
     const n = parseInt(raw, 10);
     if (n >= 1 && n <= 6) {
-      return { number: n, timelineEnabled: n >= 2, label: `Lesson ${n}` };
+      return { number: n, timelineEnabled: true, label: `Lesson ${n}` };
     }
     return { number: 0, timelineEnabled: true, label: '' };
   }

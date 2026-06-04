@@ -9,7 +9,7 @@ After **Settings → Pages** is set to deploy from branch `main` / root (wait 1�
 | Use | URL |
 |-----|-----|
 | **Teaching slides (smartboard)** | https://lewisjakewhite26.github.io/C2Computing/ |
-| **Lesson 1 app (iPads)** | https://lewisjakewhite26.github.io/C2Computing/soundwave-studio.html?lesson=1 |
+| **SoundWave (iPads / class)** | https://lewisjakewhite26.github.io/C2Computing/soundwave-studio.html?lesson=2 |
 | **Lesson plan (print)** | https://lewisjakewhite26.github.io/C2Computing/ks1-audio-lesson1.html |
 | **Full studio** | https://lewisjakewhite26.github.io/C2Computing/soundwave-studio.html |
 
@@ -36,8 +36,7 @@ Repo: https://github.com/lewisjakewhite26/C2Computing
 
 | Lesson | Append to app URL |
 |--------|-------------------|
-| 1 | `?lesson=1` (timeline hidden) |
-| 2–6 | `?lesson=2` … `?lesson=6` |
+| 1–6 | `?lesson=1` … `?lesson=6` (timeline from lesson 1 up) |
 | All features | (no query) |
 
 ## SoundWave controls
